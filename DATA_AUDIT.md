@@ -1,7 +1,7 @@
 # London Data Week 2026 — Youth Offer for London
 ## Data Audit and Evidence Log
 
-**Status:** D9a explanatory and predictive model/feature selection complete; implementation not started
+**Status:** D9b modelling-table, predictive-transition and B1–B3 baseline implementation complete and QA-verified; M1 implementation next
 **Purpose:** Preserve the factual findings, checks, examples, anomalies, and rationale that support project decisions.
 **Relationship to `DECISIONS.md`:** `DECISIONS.md` records accepted decisions; this file records the evidence behind them and unresolved findings still under investigation.
 
@@ -2127,7 +2127,186 @@ No 2022/23 predictive performance was calculated or used during D9a selection.
 
 ---
 
-# 21. Current open questions after D9a model selection
+# 21. D9b implementation checkpoint — modelling tables and predictive baselines
+
+## 21.1 Implementation scope completed
+
+The first D9 implementation layer has been completed under the frozen D1–D9a definitions.
+
+Implemented components:
+
+- London Local Authority source extraction for the seven analysis cohorts;
+- exact headline borough-year outcome construction;
+- FSM and Identified-SEN composition variables;
+- standalone special-school cohort share;
+- approximate disadvantaged cohort share sensitivity variable;
+- complete explanatory modelling table;
+- one-cohort-ahead predictive transition table for development;
+- predictive baselines B1–B3.
+
+The implementation remains deliberately simple and function-based. No substantive estimator has yet been fitted during D9 implementation.
+
+## 21.2 Explanatory modelling table
+
+The explanatory table contains the frozen 32-LA × 7-cohort panel:
+
+- **224 borough-year rows**;
+- cohorts **2016/17–2022/23**;
+- one row per Local Authority × cohort;
+- exact headline cohort denominator;
+- exact adverse count and adverse rate;
+- FSM-eligible cohort share;
+- Identified-SEN cohort share;
+- standalone special-school cohort share;
+- approximate disadvantaged cohort share sensitivity variable.
+
+Hard QA confirms:
+
+- expected row count and all seven cohort years;
+- exactly 32 boroughs per cohort;
+- unique borough-year grain;
+- stable one-to-one LA-code / LA-name mapping;
+- no missing required modelling fields;
+- valid count and rate bounds;
+- exact headline destination accounting;
+- exact FSM and top-level SEN source accounting;
+- exact combined-population = mainstream + standalone-special accounting.
+
+The disadvantaged cohort share remains explicitly approximate because its displayed cohort counts are disclosure-rounded.
+
+## 21.3 Development predictive transition table
+
+A separate one-cohort-ahead transition table was constructed for predictive development.
+
+Each row represents:
+
+```text
+borough b at cohort t
+    ↓
+features known at t
+    ↓
+adverse-rate target at t+1
+```
+
+Development transitions are restricted to:
+
+```text
+2016/17 → 2017/18
+2017/18 → 2018/19
+2018/19 → 2019/20
+2019/20 → 2020/21
+2020/21 → 2021/22
+```
+
+This produces:
+
+- **160 transition rows**;
+- 5 transitions × 32 boroughs;
+- feature variables from cohort `t` only:
+  - borough adverse rate;
+  - FSM-eligible share;
+  - Identified-SEN share;
+- target adverse rate from cohort `t+1`;
+- target cohort denominator retained only for later weighted-MAE evaluation.
+
+The locked **2022/23 target is not materialised in the development transition table**.
+
+QA confirms:
+
+- exactly the five permitted transition pairs;
+- exactly 32 boroughs in each transition;
+- unique borough-transition grain;
+- no missing predictive fields;
+- valid rate and denominator ranges;
+- 2022/23 absent from development feature and target years.
+
+An independent source-alignment check also verifies that, for every transition:
+
+- feature values match the same borough's original cohort-`t` row;
+- target adverse rate and target denominator match the same borough's original cohort-`t+1` row.
+
+This check does not reproduce the original `shift()` transformation. Instead it independently looks up the explicitly stored `feature_year` and `target_year` in the verified borough-year table.
+
+## 21.4 Baseline implementation
+
+The three frozen predictive baselines have been implemented.
+
+### B1 — borough persistence
+
+```text
+prediction(b, t+1) = adverse_rate(b, t)
+```
+
+### B2 — London-level persistence
+
+```text
+prediction(b, t+1) = London_adverse_rate(t)
+```
+
+The London rate is calculated from aggregate exact counts:
+
+```text
+sum_b adverse_count(b,t)
+--------------------------
+sum_b cohort_count(b,t)
+```
+
+rather than as an unweighted mean of borough rates.
+
+### B3 — London level + historical borough offset
+
+```text
+prediction(b, t+1)
+    =
+London_adverse_rate(t)
+    +
+mean_{s <= t}[
+    adverse_rate(b,s) - London_adverse_rate(s)
+]
+```
+
+The borough offset is therefore expanding-history only: information from cohorts after the feature year cannot enter the prediction.
+
+## 21.5 Baseline QA
+
+Baseline QA was implemented separately from the prediction construction where practical.
+
+For B1:
+
+- prediction is checked directly against the feature-year borough adverse rate.
+
+For B2:
+
+- the implementation constructs the London rate from aggregate counts;
+- QA reconstructs the same quantity independently as a cohort-size-weighted average of borough adverse rates;
+- all 32 boroughs within a feature year are checked to receive one common London prediction.
+
+For B3:
+
+- implementation uses grouped expanding historical borough offsets;
+- QA does **not** repeat the expanding calculation;
+- instead, each transition is checked row-by-row by explicitly selecting that borough's history satisfying `year <= feature_year`;
+- annual borough-minus-London offsets are reconstructed and averaged;
+- later cohorts are therefore explicitly excluded from the expected prediction.
+
+All baseline QA checks pass.
+
+## 21.6 Leakage status and next step
+
+No predictive performance metric has yet been calculated during D9 implementation.
+
+In particular:
+
+- no 2022/23 predictive target has entered the development transition table;
+- no 2022/23 prediction error has been calculated or inspected;
+- B1–B3 use only information available through each feature cohort;
+- no learned predictive model has yet been fitted during D9 implementation.
+
+The next implementation step is therefore to implement and QA the frozen learned model **M1** under the expanding-window specification before any final 2022/23 evaluation is opened.
+
+---
+
+# 22. Current open questions
 
 1. What exact common reference distribution / formula should be used if standardised adjusted borough summaries are included in final explanatory reporting?
 2. What exact public-facing label, if any, should refine “Outside recorded sustained destinations” without changing its frozen definition?
@@ -2135,10 +2314,10 @@ No 2022/23 predictive performance was calculated or used during D9a selection.
 
 ---
 
-# 22. Workflow rule
+# 23. Workflow rule
 
 Proceed in the order:
 
 **problem understanding → raw-data understanding → population/outcome decisions → data-quality audit → EDA → modelling question → validation design → implementation → final audit**
 
-**D9a explanatory and predictive model/feature selection is complete.** The next step is D9 implementation under the frozen specifications. Do not calculate or inspect 2022/23 predictive performance until the implementation reproduces the predeclared feature, baseline and learned-model definitions without leakage.
+**D9b modelling-table construction, predictive-transition construction and B1–B3 baseline implementation are complete and QA-verified.** The next step is implementation and QA of the frozen learned model M1 under the predeclared expanding-window design. Do not calculate or inspect 2022/23 predictive performance until the learned-model implementation and pre-evaluation diagnostics are complete.
