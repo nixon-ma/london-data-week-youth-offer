@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
+from sklearn.linear_model import QuantileRegressor
 
+from youth_offer.predictive import M1_FEATURE_COLUMNS
 
 EXPECTED_YEARS = {
     "201617",
@@ -32,6 +34,13 @@ EXPECTED_TRANSITION_PAIRS = {
 }
 
 EXPECTED_TRANSITION_ROWS = 160
+
+M1_DEVELOPMENT_TRAIN_SIZES = {
+    "201819": 32,
+    "201920": 64,
+    "202021": 96,
+    "202122": 128,
+}
 
 
 def assert_headline_outcome_table(outcome: pd.DataFrame) -> None:
@@ -811,3 +820,174 @@ def assert_baseline_predictions(
         "B3 is incorrect or uses information unavailable "
         "at the feature year."
     )
+
+
+def assert_m1_development_fold(
+    train: pd.DataFrame,
+    test: pd.DataFrame,
+    target_year: str,
+    ) -> None:
+    """Verify one M1 rolling-origin development fold."""
+
+    expected_train_size = M1_DEVELOPMENT_TRAIN_SIZES[target_year]
+
+    assert len(train) == expected_train_size, (
+        f"{target_year}: expected {expected_train_size} training rows, "
+        f"got {len(train)}."
+    )
+
+    assert len(test) == EXPECTED_BOROUGHS, (
+        f"{target_year}: expected {EXPECTED_BOROUGHS} test rows, "
+        f"got {len(test)}."
+    )
+
+    # Assert that EVERY training target year is strictly before target_year.
+    train_target_year_mask = train["target_year"].lt(target_year)
+    assert train_target_year_mask.all(), (
+        f"{target_year}: training set contains non-earlier target years: "
+        f"{train.loc[~train_target_year_mask,'target_year'].tolist()}"
+    )
+
+    # Assert that EVERY test row has target_year equal to target_year.
+    test_target_year_mask = test["target_year"].eq(target_year)
+    assert test_target_year_mask.all(), (
+        f"{target_year}: test set contains different target years: "
+        f"{test.loc[~test_target_year_mask, 'target_year'].tolist()}"
+    )
+
+    # Assert that none of the three M1 feature columns are missing
+    # in either train or test.
+    assert train[M1_FEATURE_COLUMNS].notna().all().all(), (
+        f"{target_year}: Missing values detected in training set"
+    )
+
+    assert test[M1_FEATURE_COLUMNS].notna().all().all(), (
+        f"{target_year}: Missing values detected in test set"
+    )
+
+
+def assert_m1_fit(
+    train: pd.DataFrame,
+    test: pd.DataFrame,
+    predictions: pd.Series,
+    estimator: QuantileRegressor,
+    ) -> None:
+    """Verify numerical validity of one fitted M1 development fold."""
+
+    # Frozen feature specification.
+    assert M1_FEATURE_COLUMNS == [
+        "feature_adverse_rate",
+        "feature_fsm_share",
+        "feature_identified_sen_share",
+    ]
+
+    # There must be one prediction for every test borough.
+    assert len(predictions) == EXPECTED_BOROUGHS, (
+        f"Expected {EXPECTED_BOROUGHS} M1 predictions, "
+        f"got {len(predictions)}."
+    )
+
+    # Exactly one coefficient per frozen feature.
+    assert len(estimator.coef_) == len(M1_FEATURE_COLUMNS), (
+        f"Expected {len(M1_FEATURE_COLUMNS)} coefficients, "
+        f"got {len(estimator.coef_)}."
+    )
+
+    # Check that the intercept and all three coefficients are finite.
+    assert np.isfinite(estimator.intercept_), (
+        "intercept is non-finite."
+    )
+
+    assert np.isfinite(estimator.coef_).all(), (
+        "at least 1 coefficient is non-finite."
+    )
+
+    assert estimator.get_params()["quantile"] == 0.5
+    assert estimator.get_params()["alpha"] == 0.0
+    assert estimator.get_params()["fit_intercept"] is True
+    assert estimator.get_params()["solver"] == "highs"
+
+    # Check that every prediction is finite.
+    predictions_finite_mask = np.isfinite(predictions.to_numpy())
+    assert predictions_finite_mask.all(), (
+        "non-finite predictions at positions: "
+        f"{np.where(~predictions_finite_mask)[0].tolist()}"
+    )
+
+    assert predictions.index.equals(test.index), (
+        "Prediction indices do not match test rows."
+    )
+
+    np.testing.assert_allclose(
+        predictions.to_numpy(dtype=float),
+        estimator.predict(test[M1_FEATURE_COLUMNS]),
+        rtol=1e-12,
+        atol=1e-12,
+    )
+
+    # Construct the training design matrix INCLUDING an intercept column,
+    # then assert that its rank is 4.
+    train_matrix = np.ones(len(train))
+    train_matrix = np.column_stack(
+        (train_matrix, train[M1_FEATURE_COLUMNS].to_numpy(dtype=float))
+        )
+
+    matrix_rank = np.linalg.matrix_rank(train_matrix)
+    expected_rank = len(M1_FEATURE_COLUMNS) + 1
+
+    assert matrix_rank == expected_rank, (
+        f"expected design matrix rank {expected_rank}, got rank {matrix_rank}."
+    )
+
+
+def assert_m1_development_predictions(
+    m1_predictions: pd.DataFrame,
+    transitions: pd.DataFrame,
+    ) -> None:
+    """Verify the assembled M1 development predictions."""
+
+    expected_counts = {
+        year: EXPECTED_BOROUGHS
+        for year in M1_DEVELOPMENT_TRAIN_SIZES
+    }
+
+    actual_counts = (
+        m1_predictions.groupby("target_year")
+        .size()
+        .to_dict()
+    )
+
+    assert actual_counts == expected_counts, (
+        f"Expected {expected_counts}, got {actual_counts}."
+    )
+
+    # Assert that no (new_la_code, target_year) pair is duplicated.
+    duplicate_mask = m1_predictions.duplicated(subset=["new_la_code","target_year"])
+    assert not duplicate_mask.any(), (
+        f"Found {duplicate_mask.sum()} duplicate borough-year rows."
+    )
+
+    assert np.isfinite(
+        m1_predictions["m1_prediction"].to_numpy(dtype=float)
+    ).all(), "Non-finite M1 predictions found."
+
+    # Select the original 128 development evaluation rows.
+    expected = (
+        transitions.loc[
+            transitions["target_year"].isin(
+                list(M1_DEVELOPMENT_TRAIN_SIZES)
+            )
+        ]
+        .sort_values(["target_year", "new_la_code"])
+        .reset_index(drop=True)
+    )
+
+    # Select the same original columns from the assembled predictions.
+    actual = (
+        m1_predictions[transitions.columns]
+        .sort_values(["target_year", "new_la_code"])
+        .reset_index(drop=True)
+    )
+
+    # Assert that actual and expected DataFrames are identical.
+    pd.testing.assert_frame_equal(expected, actual)
