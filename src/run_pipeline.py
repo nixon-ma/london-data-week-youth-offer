@@ -1,6 +1,6 @@
 from pathlib import Path
 import pandas as pd
-from youth_offer import data, model_tables, baselines, predictive, qa
+from youth_offer import data, model_tables, baselines, predictive, evaluation, qa
 from youth_offer.predictive import DEVELOPMENT_TARGET_YEARS
 
 
@@ -100,6 +100,52 @@ def main() -> None:
 
     print(m1_diagnostics.to_string(index=False))
     print("Assembled M1 predictions QA passed.")
+
+    # Assemble B1-B3 and M1 on identical held-out observations.
+    evaluation_table = evaluation.build_development_evaluation_table(baseline_predictions, m1_predictions)
+    qa.assert_development_evaluation_table(evaluation_table, baseline_predictions, m1_predictions)
+
+    evaluation_table.to_csv(
+        output_dir / "evaluation_table.csv",
+        index=False,
+    )
+
+    print("Development evaluation-table QA passed.")
+
+
+    # Calculate performance by development target year.
+    annual_metrics = evaluation.calculate_development_annual_metrics(
+        evaluation_table
+    )
+
+    qa.assert_development_annual_metrics(
+        annual_metrics,
+        evaluation_table,
+    )
+
+    print("Annual development metric QA passed.")
+
+    # Average performance equally across development years.
+    summary_metrics = evaluation.summarize_development_metrics(
+        annual_metrics
+    )
+
+    qa.assert_development_summary_metrics(
+        summary_metrics,
+        annual_metrics,
+    )
+
+    annual_metrics.to_csv(
+        output_dir / "annual_metrics.csv",
+        index=False,
+    )
+
+    summary_metrics.to_csv(
+        output_dir / "summary_metrics.csv",
+        index=False,
+    )
+
+    print("Development summary metric QA passed.")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 # London Data Week 2026 — Youth Offer for London
 ## Data Audit and Evidence Log
 
-**Status:** D9b modelling tables, predictive baselines and M1 development implementation completed with QA; development model-comparison metrics pending
+**Status:** D9c development model-comparison metrics implemented and QA-verified; 2022/23 predictive evaluation remains locked
 **Purpose:** Preserve the factual findings, checks, examples, anomalies, and rationale that support project decisions.
 **Relationship to `DECISIONS.md`:** `DECISIONS.md` records accepted decisions; this file records the evidence behind them and unresolved findings still under investigation.
 
@@ -2351,7 +2351,74 @@ The **2022/23 final temporal evaluation remains locked**: no 2022/23 target appe
 
 ---
 
-# 22. Current open questions
+# 22. D9c — Development Performance Evaluation evidence
+
+## 22.1 Inputs, alignment and metric definitions
+
+The predictive development evaluation uses four expanding-window M1 test cohorts, 2018/19–2021/22, each containing the same 32 London boroughs. It combines the 128 held-out M1 forecasts with B1–B3 forecasts using unique `new_la_code × feature_year × target_year` keys, preserving both input copies of the target adverse rate and target-cohort denominator for source agreement checks.
+
+For each *target year* and each method, calculate unweighted borough MAE and RMSE and target-cohort-denominator-weighted MAE from the 32 observed rates and predictions. Multiply rate-unit errors by 100 to report percentage points. Report the **arithmetic average of four annual values** for every metric; in particular, mean annual RMSE is *not* pooled 128-row RMSE, and mean annual weighted MAE is *not* a pooled-across-years weighted MAE. Target-cohort count is used as an ex-post evaluation weight and never as an M1 predictor.
+
+Produced outputs under ignored `outputs/development/`: `evaluation_table.csv` (128 rows), `annual_metrics.csv` (16 year–method rows), `summary_metrics.csv` (four method rows), alongside D9b `m1_predictions.csv` and `m1_diagnostics.csv`.
+
+## 22.2 Observed development metrics
+
+All values below are percentage points. A negative MAE difference from B1 indicates lower MAE.
+
+| Target | Method | MAE | RMSE | Weighted MAE | MAE − B1 |
+|---|---|---:|---:|---:|---:|
+| 2018/19 | B1 | 0.638654 | 0.838228 | 0.614254 | 0.000000 |
+| 2018/19 | B2 | 1.063366 | 1.345478 | 1.046259 | +0.424712 |
+| 2018/19 | B3 | 0.552739 | 0.713571 | 0.545086 | −0.085915 |
+| 2018/19 | M1 | 0.684038 | 0.933547 | 0.647226 | +0.045385 |
+| 2019/20 | B1 | 0.856626 | 1.108953 | 0.748049 | 0.000000 |
+| 2019/20 | B2 | 0.965666 | 1.187146 | 0.955942 | +0.109040 |
+| 2019/20 | B3 | 0.800608 | 0.997435 | 0.744405 | −0.056017 |
+| 2019/20 | M1 | 0.808823 | 1.039947 | 0.710365 | −0.047803 |
+| 2020/21 | B1 | 0.581264 | 0.723614 | 0.534507 | 0.000000 |
+| 2020/21 | B2 | 0.733420 | 0.964057 | 0.733057 | +0.152156 |
+| 2020/21 | B3 | 0.494217 | 0.606209 | 0.464696 | −0.087047 |
+| 2020/21 | M1 | 0.524858 | 0.653492 | 0.481461 | −0.056406 |
+| 2021/22 | B1 | 0.787596 | 0.972902 | 0.771081 | 0.000000 |
+| 2021/22 | B2 | 1.057107 | 1.300378 | 1.050812 | +0.269511 |
+| 2021/22 | B3 | 0.705403 | 0.848497 | 0.707364 | −0.082193 |
+| 2021/22 | M1 | 0.805188 | 0.989690 | 0.793886 | +0.017592 |
+
+| Method | Mean annual MAE | Mean annual RMSE | Mean annual weighted MAE | Mean MAE − B1 |
+|---|---:|---:|---:|---:|
+| B1 | 0.716035 | 0.910924 | 0.666973 | 0.000000 |
+| B2 | 0.954890 | 1.199265 | 0.946517 | +0.238855 |
+| B3 | 0.638242 | 0.791428 | 0.615388 | −0.077793 |
+| M1 | 0.705727 | 0.904169 | 0.658234 | −0.010308 |
+
+## 22.3 Paired M1–B3 error diagnostics
+
+Define per-observation difference as `abs(M1 prediction − observed) − abs(B3 prediction − observed)` in percentage points. Positive favours B3. These are descriptive diagnostics, not model-selection thresholds or independent inferential trials.
+
+| Target | Mean difference (pp) | Median (pp) | B3 smaller error | M1 smaller error |
+|---|---:|---:|---:|---:|
+| 2018/19 | +0.131299 | +0.046865 | 19 | 13 |
+| 2019/20 | +0.008215 | −0.059473 | 12 | 20 |
+| 2020/21 | +0.030641 | +0.024595 | 17 | 15 |
+| 2021/22 | +0.099784 | +0.040823 | 21 | 11 |
+| Total/mean | +0.067485 | — | 69 | 59 |
+
+B3 has lower annual MAE than M1 in all four years but smaller error in only 69/128 individual borough-year observations. In 2019/20 M1 has the smaller error in 20/32 boroughs while B3 has slightly lower mean MAE, showing that the magnitude and frequency of wins are different questions. Some individual M1 disadvantages relative to B3 exceed one percentage point. This does not establish a stable future advantage.
+
+## 22.4 Validation evidence and limitations
+
+- The common evaluation table is checked for exact expected key coverage, uniqueness and equality to source M1/B1–B3 keys; independent key-indexed comparison checks every merged target, denominator and prediction against its source.
+- Annual QA validates exactly four years × four methods, independently recomputes MAE, RMSE and weighted MAE using scikit-learn, and checks B1-relative differences. Summary QA checks four method rows, arithmetic averaging across four years and signed differences.
+- Synthetic known-answer checks cover all four methods, weighting and B1 differences. Deliberately altered prediction/target and metric values are rejected by the corresponding QA checks. The source/pipeline QA passed after adding source-value preservation.
+- All method definitions, cohort windows and model parameters remain frozen. The effective temporal evidence is four distinct target-year regimes, not 128 independent experiments. No narrow model-superiority confidence interval, significance claim or causal explanation is warranted.
+- B3 and M1 use different historical information sets. Their comparison does not identify the incremental contribution of FSM or SEN conditional on B3. The benchmark is retrospective on the harmonised published series; data-release timing does not support claims about real-time operational forecasts.
+- The 2022/23 predictive evaluation remains locked. It was **not** constructed, scored or inspected during D9c. Presence of the cohort in separate explanatory/EDA tables does not release the predictive lock.
+
+**Reproduction:** From the repository root, run `python -m unittest discover -s tests -p 'test_development_evaluation.py' -v` for self-contained synthetic QA, followed by `python src/run_pipeline.py` to regenerate ignored development outputs and `python scripts/development_error_diagnostics.py` to recreate the M1–B3 borough-error comparisons in §22.3. Compare the generated development metric tables with the recorded values above. Source-code and documentation commit/push status is tracked by Git, not implied by this evidence log.
+
+---
+
+# 23. Current open questions
 
 1. What exact common reference distribution / formula should be used if standardised adjusted borough summaries are included in final explanatory reporting?
 2. What exact public-facing label, if any, should refine “Outside recorded sustained destinations” without changing its frozen definition?
@@ -2359,10 +2426,10 @@ The **2022/23 final temporal evaluation remains locked**: no 2022/23 target appe
 
 ---
 
-# 23. Workflow rule
+# 24. Workflow rule
 
 Proceed in the order:
 
 **problem understanding → raw-data understanding → population/outcome decisions → data-quality audit → EDA → modelling question → validation design → implementation → final audit**
 
-**D9b modelling-table construction, predictive transitions, B1–B3 and M1 development implementation have passed the documented QA checks.** The next stage is to calculate and review the predeclared *development* predictive metrics (2018/19–2021/22) for B1–B3 and M1, without score-driven changes to the frozen models. Do not calculate or inspect 2022/23 predictive performance until the development evaluation and pre-final checks are completed.
+**D9c predictive development metrics have been calculated and independently QA-verified.** Maintain the four frozen methods; proceed to pre-final checks and the remaining explanatory-model implementation before separately authorising the locked 2022/23 predictive evaluation.

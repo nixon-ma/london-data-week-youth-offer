@@ -958,6 +958,29 @@ Any such reopening must be documented before 2022/23 predictive performance is c
 
 ---
 
+# D9c — Development Performance Evaluation
+
+**Status:** Accepted; D9c implementation and QA completed.
+
+**Evidence:** `DATA_AUDIT.md` §22 and the reproducible D9c evaluation code/tests.
+
+**Decision:** Preserve the four D9a9 methods (B1, B2, B3, M1) unchanged. Evaluate each on the same 128 held-out borough–target-year observations from the four expanding-window development targets, 2018/19–2021/22. Report within-year MAE, RMSE and target-cohort-weighted MAE (all in percentage points) and arithmetic means of the four annual scores. Target-cohort denominators are evaluation weights only. Negative `MAE − B1 MAE` denotes an improvement over B1.
+
+| Method | Mean annual MAE (pp) | Mean annual RMSE (pp) | Mean annual weighted MAE (pp) | MAE − B1 (pp) |
+|---|---:|---:|---:|---:|
+| B1: borough persistence | 0.716035 | 0.910924 | 0.666973 | 0.000000 |
+| B2: London persistence | 0.954890 | 1.199265 | 0.946517 | +0.238855 |
+| B3: London + expanding borough offset | 0.638242 | 0.791428 | 0.615388 | −0.077793 |
+| M1: frozen median/LAD regression | 0.705727 | 0.904169 | 0.658234 | −0.010308 |
+
+**Interpretation:** B3 has the lowest mean annual error on all three predeclared metrics and a lower annual MAE than M1 in each of the four development years. However, B3's individual absolute error is smaller in only 69/128 borough-year comparisons versus 59/128 for M1. M1 beats B1 on annual MAE in two of four development years; its mean B1 improvement (0.010308 pp) is small. These are descriptive comparisons, **not statistically established superiority**: just four common target-year regimes are observed, and borough errors share annual shocks.
+
+The results do not demonstrate that FSM/SEN add or lack incremental predictive value *conditional on B3*, because B3 and M1 use different information sets. No score-driven tuning, model selection or replacement is permitted. The current series is retrospective and harmonised, not point-in-time operational forecasts. The adverse outcome is **not** a direct NEET measure.
+
+**Validation:** Common keys and merged source values were checked; 16 year–method records and four method summaries were independently recalculated and validated; two-cohort known-answer synthetic and deliberate-corruption tests passed. No 2022/23 predictive target was constructed, scored or inspected in D9c. That final evaluation remains locked until the pre-final audit and formal release of the evaluation boundary.
+
+---
+
 # Open Questions
 
 These are not yet accepted decisions.
@@ -974,4 +997,4 @@ Proceed in the order:
 
 **problem understanding → raw-data understanding → population/outcome decisions → data-quality audit → EDA → modelling question → validation design → implementation → final audit**
 
-**D9a model/feature selection is complete for both the explanatory and predictive tracks.** The next step is D9 implementation under the frozen specifications. Do not calculate or inspect 2022/23 predictive performance until the implementation reproduces the predeclared feature, baseline and learned-model definitions without leakage.
+**D9c development predictive evaluation is implemented and QA-verified.** Next, complete the pre-final predictive audit and any still-unimplemented explanatory modelling work under the frozen D9a specification. Do not calculate or inspect 2022/23 predictive performance until the final boundary is explicitly released after all pre-final checks.

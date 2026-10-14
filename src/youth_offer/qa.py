@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+from math import sqrt
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.linear_model import QuantileRegressor
 
 from youth_offer.predictive import M1_FEATURE_COLUMNS
@@ -991,3 +993,299 @@ def assert_m1_development_predictions(
 
     # Assert that actual and expected DataFrames are identical.
     pd.testing.assert_frame_equal(expected, actual)
+
+
+def assert_development_evaluation_table(
+    evaluation: pd.DataFrame,
+    baseline_predictions: pd.DataFrame,
+    m1_predictions: pd.DataFrame,
+    ) -> None:
+    """Verify the common B1-B3/M1 development evaluation table."""
+
+    key = ["new_la_code", "feature_year", "target_year"]
+    expected_years = set(M1_DEVELOPMENT_TRAIN_SIZES)
+    expected_rows = EXPECTED_BOROUGHS * len(expected_years)
+
+    # Restrict baseline records to the M1 development folds.
+    baseline_rows = baseline_predictions.loc[
+        baseline_predictions["target_year"].isin(expected_years)
+    ]
+
+    # Check expected development coverage.
+    assert len(evaluation) == expected_rows
+    assert set(evaluation["target_year"]) == expected_years
+    assert "202223" not in set(evaluation["target_year"])
+
+    counts = evaluation.groupby("target_year").size()
+    assert counts.eq(EXPECTED_BOROUGHS).all()
+
+    # Check unique keys in all three tables.
+    for table in (baseline_rows, m1_predictions, evaluation):
+        assert not table.duplicated(subset=key).any(), (
+            "Duplicate borough-transition keys found."
+        )
+
+    # Independently compare all three key sets.
+    # A merge can silently discard records, even if
+    # validate="one_to_one" succeeds.
+    baseline_keys = set(
+        baseline_rows[key].itertuples(index=False, name=None)
+    )
+
+    m1_keys = set(
+        m1_predictions[key].itertuples(index=False, name=None)
+    )
+
+    evaluation_keys = set(
+        evaluation[key].itertuples(index=False, name=None)
+    )
+
+    assert baseline_keys == m1_keys == evaluation_keys, (
+        "Development evaluation key sets do not match."
+    )
+
+    # Independently verify that the merge preserved
+    # every prediction, target and denominator.
+    evaluation_aligned = evaluation.set_index(key).sort_index()
+    baseline_aligned = baseline_rows.set_index(key).sort_index()
+    m1_aligned = m1_predictions.set_index(key).sort_index()
+
+    source_checks = [
+        (baseline_aligned, {
+            "target_adverse_rate": "target_adverse_rate_baseline",
+            "target_cohort_count": "target_cohort_count_baseline",
+            "b1_borough_persistence": "b1_borough_persistence",
+            "b2_london_persistence": "b2_london_persistence",
+            "b3_london_plus_borough_offset": "b3_london_plus_borough_offset",
+        }),
+        (m1_aligned, {
+            "target_adverse_rate": "target_adverse_rate_m1",
+            "target_cohort_count": "target_cohort_count_m1",
+            "m1_prediction": "m1_prediction",
+        }),
+    ]
+
+    for source, column_mapping in source_checks:
+        for source_column, evaluation_column in column_mapping.items():
+            pd.testing.assert_series_equal(
+                evaluation_aligned[evaluation_column],
+                source[source_column],
+                check_names=False,
+            )
+
+    # Check that both sources contain identical targets.
+    np.testing.assert_array_equal(
+        evaluation["target_adverse_rate_baseline"],
+        evaluation["target_adverse_rate_m1"],
+    )
+
+    np.testing.assert_array_equal(
+        evaluation["target_cohort_count_baseline"],
+        evaluation["target_cohort_count_m1"],
+    )
+
+    # Check the numerical validity of evaluation inputs.
+    numeric_columns = [
+        "target_adverse_rate_baseline",
+        "target_adverse_rate_m1",
+        "target_cohort_count_baseline",
+        "target_cohort_count_m1",
+        "b1_borough_persistence",
+        "b2_london_persistence",
+        "b3_london_plus_borough_offset",
+        "m1_prediction",
+    ]
+
+    assert np.isfinite(
+        evaluation[numeric_columns].to_numpy(dtype=float)
+    ).all(), "Non-finite evaluation values found."
+
+    assert evaluation["target_cohort_count_baseline"].gt(0).all()
+    assert evaluation["target_adverse_rate_baseline"].between(0, 1).all()
+
+
+def assert_development_annual_metrics(
+    annual: pd.DataFrame,
+    evaluation_table: pd.DataFrame,
+    ) -> None:
+    """Independently verify annual development metrics."""
+
+    # Define methods independently of evaluation.py.
+    method_columns = {
+        "B1": "b1_borough_persistence",
+        "B2": "b2_london_persistence",
+        "B3": "b3_london_plus_borough_offset",
+        "M1": "m1_prediction",
+    }
+
+    expected_years = set(M1_DEVELOPMENT_TRAIN_SIZES)
+
+    expected_pairs = {
+        (year, method)
+        for year in expected_years
+        for method in method_columns
+    }
+
+    actual_pairs = list(
+        annual[["target_year", "method"]].itertuples(
+            index=False, name=None
+        )
+    )
+
+    # Exactly one result for each year-method combination.
+    assert len(annual) == 16
+    assert len(set(actual_pairs)) == 16
+    assert set(actual_pairs) == expected_pairs
+
+    metric_columns = [
+        "mae_pp",
+        "rmse_pp",
+        "weighted_mae_pp",
+        "mae_minus_b1_pp",
+    ]
+
+    assert np.isfinite(
+        annual[metric_columns].to_numpy(dtype=float)
+    ).all(), "Non-finite annual metrics."
+
+    # Error magnitudes cannot be negative.
+    assert annual[
+        ["mae_pp", "rmse_pp", "weighted_mae_pp"]
+    ].ge(0).all().all()
+
+    # Independently recalculate every year-method metric
+    # using scikit-learn rather than the production NumPy formulas.
+    for year in sorted(expected_years):
+        rows = evaluation_table.loc[
+            evaluation_table["target_year"] == year
+        ]
+
+        assert len(rows) == EXPECTED_BOROUGHS
+
+        actual = rows[
+            "target_adverse_rate_baseline"
+        ].to_numpy(dtype=float)
+
+        target_cohort_counts = rows[
+            "target_cohort_count_baseline"
+        ].to_numpy(dtype=float)
+
+        for method, column in method_columns.items():
+            predicted = rows[column].to_numpy(dtype=float)
+
+            reference_mae = 100 * mean_absolute_error(actual, predicted)
+
+            # Calculate RMSE and target-cohort-weighted MAE
+            # using scikit-learn.
+            reference_rmse = 100 * sqrt(mean_squared_error(actual, predicted))
+            reference_weighted_mae = 100 * mean_absolute_error(actual, predicted, sample_weight=target_cohort_counts)
+
+            result = annual.loc[
+                (annual["target_year"] == year)
+                & (annual["method"] == method)
+            ].iloc[0]
+
+            np.testing.assert_allclose(
+                [
+                    result["mae_pp"],
+                    result["rmse_pp"],
+                    result["weighted_mae_pp"],
+                ],
+                [
+                    reference_mae,
+                    reference_rmse,
+                    reference_weighted_mae,
+                ],
+                rtol=1e-10,
+                atol=1e-10,
+            )
+
+    # Verify differences relative to borough persistence (B1).
+    b1_mae = (
+        annual.loc[annual["method"] == "B1"]
+        .set_index("target_year")["mae_pp"]
+    )
+
+    for row in annual.itertuples(index=False):
+        expected_difference = (
+            row.mae_pp - b1_mae.loc[row.target_year]
+        )
+
+        assert np.isclose(
+            row.mae_minus_b1_pp,
+            expected_difference,
+            rtol=1e-10,
+            atol=1e-10,
+        )
+
+
+def assert_development_summary_metrics(
+    summary: pd.DataFrame,
+    annual: pd.DataFrame,
+    ) -> None:
+    """Verify equal-year aggregation of development metrics."""
+
+    expected_methods = {"B1", "B2", "B3", "M1"}
+    expected_years = set(M1_DEVELOPMENT_TRAIN_SIZES)
+
+    metric_columns = [
+        "mae_pp",
+        "rmse_pp",
+        "weighted_mae_pp",
+        "mae_minus_b1_pp",
+    ]
+
+    # One summary record per method.
+    assert len(summary) == 4
+    assert not summary["method"].duplicated().any()
+    assert set(summary["method"]) == expected_methods
+
+    assert np.isfinite(
+        summary[metric_columns].to_numpy(dtype=float)
+    ).all()
+
+    assert summary[
+        ["mae_pp", "rmse_pp", "weighted_mae_pp"]
+    ].ge(0).all().all()
+
+    # Independently verify equal-year averaging.
+    for method in expected_methods:
+        annual_rows = annual.loc[
+            annual["method"] == method
+        ]
+
+        summary_row = summary.loc[
+            summary["method"] == method
+        ].iloc[0]
+
+        assert len(annual_rows) == 4
+        assert set(annual_rows["target_year"]) == expected_years
+        assert not annual_rows["target_year"].duplicated().any()
+
+        for metric in metric_columns:
+            # Compute the arithmetic mean of the four
+            # annual values using sum() and len().
+            expected_mean = annual_rows[metric].sum() / len(annual_rows)
+
+            assert np.isclose(
+                summary_row[metric],
+                expected_mean,
+                rtol=1e-10,
+                atol=1e-10,
+            )
+
+    # Additional consistency check:
+    # Summary B1-relative differences must also equal
+    # each method's mean MAE minus B1's mean MAE.
+    b1_mean_mae = summary.loc[
+        summary["method"] == "B1", "mae_pp"
+    ].iloc[0]
+
+    expected_differences = summary["mae_pp"] - b1_mean_mae
+
+    np.testing.assert_allclose(
+        summary["mae_minus_b1_pp"],
+        expected_differences,
+        rtol=1e-10,
+        atol=1e-10,
+    )
