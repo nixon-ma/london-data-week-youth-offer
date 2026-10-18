@@ -1,0 +1,68 @@
+# London Data Week 2026 — Youth Offer for London
+
+A reproducible data-science rebuild of a London Data Week 2026 hackathon project. It examines variation in Key Stage 4 (KS4) destinations across London boroughs and evaluates whether next-cohort adverse destination rates can be forecast from historical information.
+
+> **Project status:** D1–D9c completed; D9d explanatory-model implementation in progress. The 2022/23 **predictive** evaluation remains locked. This is an analysis in development, not an operational council forecasting or intervention-allocation tool.
+
+## What are we measuring?
+
+The primary outcome is the number and proportion of pupils **not in a recorded sustained education, employment or apprenticeship destination**, combining the published *Not recorded as a sustained destination* and *Activity not captured* categories. The rate uses the exact KS4 cohort denominator.
+
+**This is not a direct NEET measure.** An unrecorded destination does not establish that a young person is not in education, employment or training; recording quality can also affect the measured rate.
+
+The main dataset has **224 borough–cohort observations**: 32 London Local Authorities across seven cohorts (2016/17–2022/23), for the combined state-funded mainstream and special-school population. Local Authority refers to the **school/institution's geography**, not necessarily the pupil's borough of residence.
+
+## Three different questions
+
+| Analysis | Question | What it can support |
+| --- | --- | --- |
+| **Descriptive** | Where, when and for which groups are adverse rates and counts high? | Identifying patterns and places or groups for further investigation |
+| **Explanatory (E1–E4)** | How are observed rates associated with persistent borough differences, common cohort-year patterns and cohort composition? | Understanding *historical conditional associations* and residual discrepancies |
+| **Predictive (B1–B3, M1)** | Using prior-cohort information, how well can we estimate the *next* cohort's rate? | Testing forecasting accuracy against simple historical benchmarks |
+
+None of these, on its own, estimates the causal impact of a council intervention.
+
+### Explanatory models: E1–E4
+
+All four models use the full seven-cohort panel, including 2022/23, and fit the observed adverse counts against exact cohort denominators with a grouped-binomial logistic model:
+
+- **E1:** Cohort-year effects.
+- **E2:** Borough effects.
+- **E3:** Borough + cohort-year effects.
+- **E4:** Borough + cohort-year effects + *same-cohort* FSM-eligible share, Identified-SEN share and standalone special-school share.
+
+These are **in-sample explanatory fits**, not next-year forecasts. E4 uses composition observed in the cohort being explained, and its categorical year effects are estimated using outcomes from those observed years. It can examine associations with changes in composition **within boroughs over time**, after common year patterns are accounted for, but **does not forecast how composition itself changes**.
+
+The special-school share is a **structural population-composition adjustment**, not an intervention target. An association with that share, if found, would not imply that changing special-school provision reduces adverse outcomes.
+
+Explanatory conclusions require uncertainty, residual and influence diagnostics and the predeclared robustness checks. Good in-sample fit alone does not establish a meaningful association, a causal effect or future predictive accuracy.
+
+### Predictive models: B1–B3 and M1
+
+For a forecast of cohort `t+1`, the inputs must come from cohort `t` or earlier. The four frozen methods are:
+
+- **B1:** Borough persistence.
+- **B2:** London-level persistence.
+- **B3:** London level plus historical borough offset.
+- **M1:** A median/least-absolute-deviations linear model using the **previous cohort's** adverse rate, FSM share and Identified-SEN share.
+
+Unlike E4, M1 does **not** include borough or cohort-year dummy variables or special-school share. This is a predeclared **parsimony choice given only seven cohorts**, **not evidence** that those factors are unimportant or cannot improve a future forecast. B3 separately represents historical borough structure. M1 also does **not** forecast next year's FSM or SEN shares; it predicts the next adverse rate directly from prior information.
+
+The 2018/19–2021/22 development target years were evaluated chronologically. B3 had lower mean development errors than M1, but the comparison does not isolate the incremental predictive value of FSM or SEN conditional on B3. The **2022/23 predictive evaluation remains locked** until explicitly authorised after pre-final checks. Using 2022/23 in explanatory fitting does **not** release that predictive boundary.
+
+Forecasting is a **retrospective benchmark on a harmonised published dataset**, not a demonstrated real-time historical forecasting system: publication delays and revisions would need separate point-in-time verification.
+
+## What can councils use this for?
+
+This project may help councils or analysts **prioritise questions**: where recorded adverse outcomes are concentrated, which historical disparities persist after statistical adjustments, and whether historical patterns offer useful forecasting benchmarks.
+
+It **cannot establish which intervention will reduce adverse destinations**. Associations with FSM, SEN or special-school share do not show causal effects, and a change in the measured adverse rate could reflect better destination recording rather than improved destinations. Evaluating an intervention would require suitable causal evidence and attention to actual sustained outcomes.
+
+## Methodology and evidence
+
+- [DECISIONS.md](DECISIONS.md) — accepted definitions, frozen modelling designs, validation and interpretation rules (especially D7, D8 and D9a).
+- [DATA_AUDIT.md](DATA_AUDIT.md) — source-data audit, construction checks, modelling evidence and implementation checkpoints.
+- [src/run_pipeline.py](src/run_pipeline.py) — current reproducible pipeline entry point.
+- [src/youth_offer/](src/youth_offer/) and [tests/](tests/) — implementation and tests.
+
+The current rebuild is deliberately distinct from the original time-limited hackathon implementation.
