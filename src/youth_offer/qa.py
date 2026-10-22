@@ -1289,3 +1289,183 @@ def assert_development_summary_metrics(
         rtol=1e-10,
         atol=1e-10,
     )
+
+
+def assert_e1_fitted_rates(
+    model_table: pd.DataFrame,
+    result,
+    X: pd.DataFrame
+    ):
+    """Verify E1 predictions against independently pooled annual rates."""
+
+    # Calculate the seven observed annual rates.
+    # Sum adverse counts and cohort denominators by year.
+    annual_totals = model_table.groupby("time_period")[["adverse_count","cohort_count"]].sum()
+
+    # Divide annual adverse totals by annual cohort totals.
+    # This should be a Series indexed by time_period.
+    observed_rates = annual_totals["adverse_count"] / annual_totals["cohort_count"]
+
+    # Obtain the 224 GLM fitted probabilities.
+    fitted_rates = np.asarray(result.predict(X), dtype=float)
+
+    # Match each borough-year row to its observed annual rate.
+    expected_rates = model_table["time_period"].map(observed_rates).to_numpy(dtype=float)
+
+    # Independently verify numerical agreement.
+    np.testing.assert_allclose(fitted_rates, expected_rates, rtol=0, atol=1e-10, equal_nan=False)
+
+    # Report the maximum absolute difference.
+    max_difference = np.max(np.abs(fitted_rates - expected_rates))
+
+    print("Observed annual rates:")
+    print(observed_rates)
+    print("Maximum absolute difference:", max_difference)
+
+
+def assert_e2_fitted_rates(
+    model_table: pd.DataFrame,
+    result,
+    X: pd.DataFrame,
+    ):
+    """Verify E2 predictions against independently pooled borough rates."""
+
+    # Calculate pooled adverse rates for all 32 boroughs.
+    borough_totals = model_table.groupby("new_la_code")[["adverse_count","cohort_count"]].sum()
+
+    observed_rates = borough_totals["adverse_count"] / borough_totals["cohort_count"]
+
+    # Obtain 224 fitted probabilities and align
+    # each with its borough's directly calculated rate.
+    fitted_rates = np.asarray(result.predict(X), dtype=float)
+
+    expected_rates = model_table["new_la_code"].map(observed_rates).to_numpy(dtype=float)
+
+    # Check numerical agreement.
+    np.testing.assert_allclose(fitted_rates, expected_rates, rtol=0, atol=1e-10, equal_nan=False)
+
+    max_difference = np.max(np.abs(fitted_rates - expected_rates))
+
+    print("Number of boroughs:", len(observed_rates))
+    print("Maximum absolute difference:", max_difference)
+
+
+def assert_e3_fitted_counts(
+    model_table: pd.DataFrame,
+    result,
+    X: pd.DataFrame,
+    ):
+    """Verify E3 fitted counts aggregated by borough and year."""
+
+    # Calculate fitted adverse probabilities.
+    fitted_rates = np.asarray(result.predict(X), dtype=float)
+
+    # Convert probabilities into expected adverse counts.
+    # Expected count = cohort denominator × fitted probability.
+    fitted_count = model_table["cohort_count"] * fitted_rates
+
+    # Create a small checking table containing:
+    # new_la_code, time_period, adverse_count, fitted_count
+    check_table = model_table[["new_la_code", "time_period", "adverse_count"]].copy()
+    check_table["fitted_count"] = fitted_count
+
+    # Independently aggregate observed and fitted
+    # adverse counts by borough.
+    borough_totals = (
+        check_table
+        .groupby("new_la_code")
+        .agg(
+            borough_observed_count=("adverse_count", "sum"),
+            borough_fitted_count=("fitted_count", "sum"),
+        )
+    )
+
+    # Repeat for cohort year.
+    year_totals = (
+        check_table
+        .groupby("time_period")
+        .agg(
+            year_observed_count=("adverse_count", "sum"),
+            year_fitted_count=("fitted_count", "sum"),
+        )
+    )
+
+    # Verify agreement using assert_allclose.
+    borough_fitted_count_np = borough_totals["borough_fitted_count"].to_numpy()
+    borough_observed_count_np = borough_totals["borough_observed_count"].to_numpy()
+    year_fitted_count_np = year_totals["year_fitted_count"].to_numpy()
+    year_observed_count_np = year_totals["year_observed_count"].to_numpy()
+    np.testing.assert_allclose(borough_fitted_count_np, borough_observed_count_np, rtol=0, atol=1e-5, equal_nan=False)
+    np.testing.assert_allclose(year_fitted_count_np, year_observed_count_np, rtol=0, atol=1e-5, equal_nan=False)
+
+    # Report maximum absolute differences.
+    borough_max_difference = np.max(np.abs(borough_fitted_count_np - borough_observed_count_np))
+    year_max_difference = np.max(np.abs(year_fitted_count_np - year_observed_count_np))
+
+    print("Number of boroughs:", len(borough_observed_count_np))
+    print("Borough maximum absolute difference:", borough_max_difference)
+
+    print("Number of years:", len(year_observed_count_np))
+    print("Year maximum absolute difference:", year_max_difference)
+
+
+def assert_e4_score_equations(
+    model_table: pd.DataFrame,
+    result,
+    X: pd.DataFrame,
+    ):
+    """Check the fitted E4 binomial score equations."""
+
+    # Calculate fitted adverse counts
+    # and observed-minus-fitted count residuals.
+    fitted_rates = np.asarray(result.predict(X), dtype=float)
+    fitted_counts = model_table["cohort_count"] * fitted_rates
+    fitted_counts = fitted_counts.to_numpy()
+
+    observed_counts = model_table["adverse_count"].to_numpy()
+
+    residual_counts = observed_counts - fitted_counts
+
+    # Calculate the score for each of the
+    # 41 predictor columns.
+    scores = np.matmul(residual_counts, X)
+
+    # Check that all 41 scores are
+    # numerically close to zero.
+    np.testing.assert_allclose(
+        scores,
+        0,
+        rtol=0,
+        atol=1e-5,
+        equal_nan=False,
+    )
+
+    print("Maximum absolute score:", np.max(np.abs(scores)))
+
+
+def assert_explanatory_glm_structure(result, X: pd.DataFrame, model_name: str):
+    """Verify the structural specification and convergence of E1–E4."""
+
+    expected_parameters = {
+        "E1": 7,
+        "E2": 32,
+        "E3": 38,
+        "E4": 41,
+    }
+
+    p = expected_parameters[model_name]
+
+    # Verify the expected design-matrix shape.
+    assert X.shape == (224, p)
+
+    # Verify that the model converged.
+    assert result.converged
+
+    # Verify model and residual degrees of freedom.
+    assert result.df_model == p - 1
+    assert result.df_resid == 224 - p
+
+    # Verify full column rank.
+    assert np.linalg.matrix_rank(X.to_numpy(dtype=float)) == p
+
+    print(f"{model_name} structural QA passed.")

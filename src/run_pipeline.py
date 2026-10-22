@@ -1,6 +1,6 @@
 from pathlib import Path
 import pandas as pd
-from youth_offer import data, model_tables, baselines, predictive, evaluation, qa
+from youth_offer import data, model_tables, baselines, predictive, evaluation, explanatory, qa
 from youth_offer.predictive import DEVELOPMENT_TARGET_YEARS
 
 
@@ -26,26 +26,45 @@ def main() -> None:
 
     disadvantaged = model_tables.build_disadvantage_composition(df, headline)
 
-    explanatory = model_tables.build_explanatory_model_table(
+    explanatory_table = model_tables.build_explanatory_model_table(
         headline,
         composition,
         special,
         disadvantaged,
     )
 
-    qa.assert_explanatory_model_table(explanatory)
+    qa.assert_explanatory_model_table(explanatory_table)
     print("Explanatory modelling-table QA passed.")
 
-    transitions = model_tables.build_development_transition_table(explanatory)
+    result_e1, X_e1 = explanatory.fit_e1(explanatory_table)
+    qa.assert_explanatory_glm_structure(result_e1, X_e1, "E1")
+    qa.assert_e1_fitted_rates(explanatory_table, result_e1, X_e1)
+
+    result_e2, X_e2 = explanatory.fit_e2(explanatory_table)
+    qa.assert_explanatory_glm_structure(result_e2, X_e2, "E2")
+    qa.assert_e2_fitted_rates(explanatory_table, result_e2, X_e2)
+
+    result_e3, X_e3 = explanatory.fit_e3(explanatory_table)
+    qa.assert_explanatory_glm_structure(result_e3, X_e3, "E3")
+    qa.assert_e3_fitted_counts(explanatory_table, result_e3, X_e3)
+
+    result_e4, X_e4 = explanatory.fit_e4(explanatory_table)
+    qa.assert_explanatory_glm_structure(result_e4, X_e4, "E4")
+    qa.assert_e4_score_equations(explanatory_table, result_e4, X_e4)
+
+    print("E1-E4 QA passed.")
+
+
+    transitions = model_tables.build_development_transition_table(explanatory_table)
 
     qa.assert_development_transition_table(transitions)
     print("Development transition QA passed.")
 
-    qa.assert_transition_source_alignment(transitions, explanatory)
+    qa.assert_transition_source_alignment(transitions, explanatory_table)
     print("Transition source-alignment QA passed.")
 
-    baseline_predictions = baselines.add_baseline_predictions(transitions, explanatory)
-    qa.assert_baseline_predictions(baseline_predictions, explanatory)
+    baseline_predictions = baselines.add_baseline_predictions(transitions, explanatory_table)
+    qa.assert_baseline_predictions(baseline_predictions, explanatory_table)
     print("Baseline QA passed.")
 
     development_predictions = []
@@ -146,6 +165,8 @@ def main() -> None:
     )
 
     print("Development summary metric QA passed.")
+
+
 
 
 if __name__ == "__main__":

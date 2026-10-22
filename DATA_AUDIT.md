@@ -2418,7 +2418,67 @@ B3 has lower annual MAE than M1 in all four years but smaller error in only 69/1
 
 ---
 
-# 23. Current open questions
+# 23. D9d — Explanatory E1–E4 implementation and numerical QA evidence
+
+## 23.1 Scope and model specification
+
+`src/youth_offer/explanatory.py` implements the four D9a5 grouped-binomial logistic GLMs using the exact borough-year adverse count `Y_bt` and denominator `n_bt` as a two-column response `[Y_bt, n_bt − Y_bt]`. The response means **not in a recorded sustained destination**, including activity not captured; it is **not a directly measured NEET rate**. The explanatory analysis includes all seven cohorts, 2016/17–2022/23, across 32 boroughs (224 rows).
+
+- **E1:** intercept plus six cohort-year indicators; 2016/17 is the reference.
+- **E2:** intercept plus 31 borough indicators; the lexicographically first `new_la_code` is the reference.
+- **E3:** intercept, 31 borough indicators and six year indicators.
+- **E4:** E3 plus three untransformed 0–1 shares: `fsm_share`, `identified_sen_share` and `special_school_share`. The composition columns are explicitly cast to NumPy-compatible `float64` before fitting.
+
+The models have no borough-by-year interactions or borough-specific trends. E4 remains associational, with borough and categorical year fixed effects. No change to the frozen D9a model or feature set was made.
+
+## 23.2 Fitting and structural evidence
+
+The locally reported fits converged and the model matrix was confirmed full-column-rank. The implemented shared `assert_explanatory_glm_structure()` checks shape, convergence, model and residual degrees of freedom, and that `matrix_rank(X) == number_of_columns`; the equality is essential because merely asserting a nonzero rank would fail to detect collinearity.
+
+| Model | Matrix rows × columns | Rank | Model df | Residual df | Pearson chi-square / residual df |
+|---|---:|---:|---:|---:|---:|
+| E1 | 224 × 7 | 7 | 6 | 217 | approximately 6.5 |
+| E2 | 224 × 32 | 32 | 31 | 192 | 2.411062 |
+| E3 | 224 × 38 | 38 | 37 | 186 | 1.583911 |
+| E4 | 224 × 41 | 41 | 40 | 183 | 1.596351 |
+
+The relatively high ratios motivate later overdispersion and residual diagnostics; they do **not** validate naive iid-binomial uncertainty or establish comparative model superiority. E4's marginally higher ratio than E3 is not, on its own, a verdict on its incremental fit: the statistic is divided by differing residual degrees of freedom. Deviance reductions and rate-scale residuals have not yet been assessed in this checkpoint.
+
+## 23.3 Independent numerical verification
+
+Separate `src/youth_offer/qa.py` checks compare fitted outputs with properties expected of the frozen binomial likelihood:
+
+| Model | Check | Maximum absolute discrepancy reported |
+|---|---|---:|
+| E1 | Predicted probabilities versus exact cohort-size-pooled annual rates (seven years) | `1.249 × 10^-16` in rate units |
+| E2 | Predicted probabilities versus exact cohort-size-pooled borough rates (32 boroughs) | `4.137 × 10^-14` in rate units |
+| E3 | Summed observed versus fitted adverse counts by borough | `9.013 × 10^-10` pupils |
+| E3 | Summed observed versus fitted adverse counts by cohort year | `2.237 × 10^-10` pupils |
+| E4 | Largest absolute score component across 41 columns, `X.T @ (Y − n * fitted_probability)` | `1.306 × 10^-9` count-weighted predictor units |
+
+E1/E2 pooled-rate identities and the E3 count-margin identities use directly aggregated observed totals; E4's score test verifies the first-order likelihood conditions, including the intercept, borough, year and composition columns. These are strong numerical checks but not evidence that the grouping, outcome interpretation, model assumptions or standard errors are automatically correct. Structural convergence/full rank and independent source-table QA are retained as separate checks.
+
+`tests/test_explanatory.py` contains four deterministic, raw-data-independent `unittest` tests: model fitting and numerical identities; frozen design-matrix columns, reference categories and row alignment (including shuffled rows, non-default index and a nullable `Float64` input); deliberate adverse-count corruption rejected by all four numerical QA functions; and a duplicated E4 predictor rejected by the full-rank QA. The user reported the four new tests and the existing test suite passing locally. A subsequent full end-to-end pipeline run should be confirmed separately before committing; its success is not asserted by the test results alone.
+
+## 23.4 Reproduction, limits and next work
+
+From the repository root:
+
+```bash
+python -m unittest discover -s tests -p 'test_explanatory.py' -v
+python -m unittest discover -s tests -p 'test_*.py' -v
+python src/run_pipeline.py
+```
+
+The pipeline builds and checks the common explanatory model table, then fits and structurally/numerically verifies E1–E4 before performing the separate, development-only predictive workflow. Existing development prediction and evaluation definitions are unchanged. The last command checks the integrated pipeline; this evidence section does not claim it was independently rerun in the current documentation review.
+
+**Outstanding frozen analyses:** quantify the predeclared `E1 -> E3`, `E2 -> E3` and `E3 -> E4` binomial deviance reductions and within-sample rate-scale MAE/RMSE; assess residuals by fitted value, cohort denominator, borough and year, with within-borough patterns and influence; implement borough-level trajectory block bootstrap (approximately 2,000 refits, subject to stability), a borough-clustered covariance cross-check, and the D9a6 sensitivity set. Interpret substantive composition and year effects on the probability / percentage-point scale, with uncertainty and no causal language. Freeze the common reference distribution before producing any optional adjusted borough summaries.
+
+**Boundary:** The seven-cohort 2022/23 observation is permitted in the *explanatory* track. This does **not** release the 2022/23 *predictive* final temporal evaluation. No final-cohort predictive error, method comparison or performance claim is part of D9d. Git commit/push status is independent of the analytical evidence recorded here.
+
+---
+
+# 24. Current open questions
 
 1. What exact common reference distribution / formula should be used if standardised adjusted borough summaries are included in final explanatory reporting?
 2. What exact public-facing label, if any, should refine “Outside recorded sustained destinations” without changing its frozen definition?
@@ -2426,10 +2486,10 @@ B3 has lower annual MAE than M1 in all four years but smaller error in only 69/1
 
 ---
 
-# 24. Workflow rule
+# 25. Workflow rule
 
 Proceed in the order:
 
 **problem understanding → raw-data understanding → population/outcome decisions → data-quality audit → EDA → modelling question → validation design → implementation → final audit**
 
-**D9c predictive development metrics have been calculated and independently QA-verified.** Maintain the four frozen methods; proceed to pre-final checks and the remaining explanatory-model implementation before separately authorising the locked 2022/23 predictive evaluation.
+**D9c predictive development metrics and D9d explanatory E1–E4 fitting/numerical QA are implemented and locally verified.** Maintain the four frozen predictive methods and explanatory specifications; complete explanatory diagnostics/inference/robustness and the pre-final predictive audit before separately authorising the locked 2022/23 predictive evaluation.

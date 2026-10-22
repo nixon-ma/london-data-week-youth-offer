@@ -981,6 +981,27 @@ The results do not demonstrate that FSM/SEN add or lack incremental predictive v
 
 ---
 
+# D9d — Explanatory GLM implementation and numerical QA checkpoint
+
+**Status:** E1–E4 fitting and structural/numerical QA implemented and locally verified. This is an implementation checkpoint, **not** completion of explanatory evaluation or inference.
+
+**Evidence:** `DATA_AUDIT.md` §23; `src/youth_offer/explanatory.py`, `src/youth_offer/qa.py`, `src/run_pipeline.py` and `tests/test_explanatory.py`.
+
+**Implementation:** Retain the frozen D9a1–D9a5 grouped-binomial logit specifications on the 224 borough × cohort records (32 boroughs × seven cohorts, 2016/17–2022/23):
+
+- **E1:** categorical cohort-year effects (2016/17 reference; seven coefficients including intercept);
+- **E2:** borough fixed effects (lowest sorted borough code as reference; 32 coefficients);
+- **E3:** borough and categorical cohort-year fixed effects (38 coefficients);
+- **E4:** E3 plus FSM-eligible, Identified-SEN and standalone special-school cohort shares, entered on the 0–1 scale (41 coefficients).
+
+**Verification:** All four fits converged and passed dimension, degrees-of-freedom, full-rank and independent numerical QA. E1/E2 fitted rates match independently pooled counts; E3 borough and year fitted-count margins match observed margins; E4 satisfies all 41 grouped-binomial score equations to numerical tolerance. The permanent synthetic `unittest` module covers specification/row alignment, these identities, corrupted-count rejection and rank-deficiency rejection. See §23 for measured discrepancies, dispersion diagnostics and reproducibility commands.
+
+**Interpretation and scope:** These checks establish implementation consistency, not substantive effects, causal relationships or valid naive-binomial standard errors. Remaining under the **unchanged** D9a/D8 plan are deviance and rate-error comparisons, residual/influence/overdispersion diagnostics, borough-block-bootstrap inference and clustered-covariance cross-check, predeclared robustness, and probability-scale reporting. Do not select or drop the E4 composition variables based on initial dispersion or significance.
+
+**Predictive boundary:** Including 2022/23 in the seven-cohort *explanatory* fits is permitted. The separate 2022/23 *predictive* evaluation remains locked, with no final-year predictive performance calculated or inspected. Code/documentation commit status is not implied by this checkpoint.
+
+---
+
 # Open Questions
 
 These are not yet accepted decisions.
@@ -997,4 +1018,4 @@ Proceed in the order:
 
 **problem understanding → raw-data understanding → population/outcome decisions → data-quality audit → EDA → modelling question → validation design → implementation → final audit**
 
-**D9c development predictive evaluation is implemented and QA-verified.** Next, complete the pre-final predictive audit and any still-unimplemented explanatory modelling work under the frozen D9a specification. Do not calculate or inspect 2022/23 predictive performance until the final boundary is explicitly released after all pre-final checks.
+**D9c predictive development evaluation and D9d E1–E4 fitting/numerical QA are implemented and locally verified.** Next, complete the explanatory fit comparisons, diagnostics, inference and robustness under frozen D9a, alongside the pre-final predictive audit. Do not calculate or inspect 2022/23 predictive performance until the final boundary is explicitly released after all pre-final checks.
