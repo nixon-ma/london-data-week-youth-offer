@@ -1,6 +1,6 @@
 from pathlib import Path
 import pandas as pd
-from youth_offer import data, model_tables, baselines, predictive, evaluation, explanatory, qa
+from youth_offer import data, model_tables, baselines, predictive, evaluation, explanatory, explanatory_diagnostics, explanatory_plots, qa
 from youth_offer.predictive import DEVELOPMENT_TARGET_YEARS
 
 
@@ -53,6 +53,85 @@ def main() -> None:
     qa.assert_e4_score_equations(explanatory_table, result_e4, X_e4)
 
     print("E1-E4 QA passed.")
+
+    deviance_reduction_E1_E3 = explanatory_diagnostics.calculate_deviance_reduction(result_e1, result_e3)
+    print(deviance_reduction_E1_E3)
+
+    deviance_reduction_E2_E3 = explanatory_diagnostics.calculate_deviance_reduction(result_e2, result_e3)
+    print(deviance_reduction_E2_E3)
+
+    deviance_reduction_E3_E4 = explanatory_diagnostics.calculate_deviance_reduction(result_e3, result_e4)
+    print(deviance_reduction_E3_E4)
+
+    rate_errors_e1 = explanatory_diagnostics.calculate_rate_errors(explanatory_table, result_e1, X_e1)
+    print(rate_errors_e1)
+    rate_errors_e2 = explanatory_diagnostics.calculate_rate_errors(explanatory_table, result_e2, X_e2)
+    print(rate_errors_e2)
+    rate_errors_e3 = explanatory_diagnostics.calculate_rate_errors(explanatory_table, result_e3, X_e3)
+    print(rate_errors_e3)
+    rate_errors_e4 = explanatory_diagnostics.calculate_rate_errors(explanatory_table, result_e4, X_e4)
+    print(rate_errors_e4)
+
+    pearson_residuals_e4 = explanatory_diagnostics.calculate_pearson_residuals(explanatory_table, result_e4, X_e4)
+    qa.assert_explanatory_pearson_residuals(
+        result_e4, pearson_residuals_e4
+    )
+    print("E4 Pearson residual QA passed.")
+
+    pearson_dispersion_e4 = explanatory_diagnostics.calculate_pearson_dispersion(pearson_residuals_e4, result_e4.df_resid)
+    print(f"E4 pearson dispersion ratio: {pearson_dispersion_e4}")
+
+    e4_residual_table = explanatory_diagnostics.build_explanatory_residual_table(
+        explanatory_table, result_e4, X_e4
+    )
+
+    qa.assert_explanatory_residual_table(
+        e4_residual_table,
+        explanatory_table,
+        result_e4,
+        X_e4,
+        rate_errors_e4,
+    )
+
+    print("E4 residual-table QA passed.")
+
+    pairs = explanatory_diagnostics.build_lagged_residual_pairs(e4_residual_table)
+    correlation_coeff = explanatory_diagnostics.calculate_lag1_residual_correlation(pairs)
+    print(correlation_coeff)
+
+    plot_path = explanatory_plots.plot_pearson_residuals(
+        e4_residual_table,
+        Path("outputs/explanatory/e4_pearson_residuals.png"),
+    )
+
+    print(f"E4 residual plots saved to {plot_path}")
+
+    heatmap_path = explanatory_plots.plot_borough_year_residuals(
+        e4_residual_table,
+        Path("outputs/explanatory/e4_borough_year_residuals.png"),
+    )
+
+    print(f"E4 borough-year residual heatmap saved to {heatmap_path}")
+
+    influence_table = explanatory_diagnostics.build_explanatory_influence_table(e4_residual_table, result_e4)
+    qa.assert_explanatory_influence_table(influence_table, result_e4)
+    print("Influence table QA passed")
+
+    top_influential = influence_table.nlargest(10, "cooks_d")
+
+    print(
+        top_influential[
+            [
+                "la_name",
+                "time_period",
+                "cohort_count",
+                "pearson_residual",
+                "hat_diag",
+                "cooks_d",
+            ]
+        ].to_string(index=False)
+    )
+
 
 
     transitions = model_tables.build_development_transition_table(explanatory_table)

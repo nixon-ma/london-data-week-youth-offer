@@ -1469,3 +1469,138 @@ def assert_explanatory_glm_structure(result, X: pd.DataFrame, model_name: str):
     assert np.linalg.matrix_rank(X.to_numpy(dtype=float)) == p
 
     print(f"{model_name} structural QA passed.")
+
+
+def assert_explanatory_pearson_residuals(result, residuals):
+    """Verify Pearson residuals against statsmodels."""
+
+    # Verify the individual Pearson residuals.
+    np.testing.assert_allclose(
+        residuals.to_numpy(dtype=float),
+        np.asarray(result.resid_pearson, dtype=float),
+        rtol=1e-10,
+        atol=1e-10,
+    )
+
+    # Verify the Pearson chi-square statistic.
+    np.testing.assert_allclose(
+        (residuals**2).sum(),
+        result.pearson_chi2,
+        rtol=1e-10,
+        atol=1e-10,
+    )
+
+
+
+def assert_explanatory_residual_table(
+    residual_table, model_table, result, X, rate_errors
+    ):
+    """Verify explanatory residual-table construction and metrics."""
+
+    required_columns = [
+        "new_la_code",
+        "la_name",
+        "time_period",
+        "cohort_count",
+        "adverse_count",
+        "observed_adverse_rate",
+        "fitted_adverse_rate",
+        "rate_residual_pp",
+        "pearson_residual",
+    ]
+
+    # Verify structure and row alignment.
+    assert set(required_columns).issubset(residual_table.columns)
+    assert len(residual_table) == len(model_table) == result.nobs
+    assert residual_table.index.equals(model_table.index)
+    assert model_table.index.equals(X.index)
+
+    # Verify original identifying fields and counts are preserved.
+    source_columns = required_columns[:5]
+
+    assert residual_table[source_columns].equals(
+        model_table[source_columns]
+    ), "Source observations changed in the residual table."
+
+    # All calculated diagnostic values must be finite.
+    diagnostic_columns = required_columns[5:]
+
+    assert np.isfinite(
+        residual_table[diagnostic_columns].to_numpy(dtype=float)
+    ).all(), "Non-finite residual diagnostics found."
+
+    # Independently reconstruct observed and fitted rates.
+    observed = (
+        model_table["adverse_count"] / model_table["cohort_count"]
+    ).to_numpy(dtype=float)
+
+    fitted = np.asarray(result.predict(X), dtype=float)
+
+    np.testing.assert_allclose(
+        residual_table["observed_adverse_rate"],
+        observed,
+        rtol=0,
+        atol=1e-12,
+    )
+
+    np.testing.assert_allclose(
+        residual_table["fitted_adverse_rate"],
+        fitted,
+        rtol=0,
+        atol=1e-12,
+    )
+
+    # Independently verify rate residuals.
+    expected_rate_residuals = 100 * (observed - fitted)
+
+    np.testing.assert_allclose(
+        residual_table["rate_residual_pp"],
+        expected_rate_residuals,
+        rtol=0,
+        atol=1e-10,
+    )
+
+    # Reuse existing Pearson residual QA.
+    assert_explanatory_pearson_residuals(
+        result,
+        residual_table["pearson_residual"],
+    )
+
+    # Reconstruct MAE and RMSE from the residual table.
+    errors = residual_table["rate_residual_pp"].to_numpy(dtype=float)
+
+    np.testing.assert_allclose(
+        [
+            np.mean(np.abs(errors)),
+            np.sqrt(np.mean(errors**2)),
+        ],
+        [
+            rate_errors["mae_pp"],
+            rate_errors["rmse_pp"],
+        ],
+        rtol=0,
+        atol=1e-10,
+    )
+
+
+def assert_explanatory_influence_table(influence_table, result):
+    """Verify GLM influence diagnostics."""
+
+    assert len(influence_table) == result.nobs
+
+    leverage = influence_table["hat_diag"].to_numpy(dtype=float)
+    cooks_d = influence_table["cooks_d"].to_numpy(dtype=float)
+
+    assert np.isfinite(leverage).all()
+    assert np.isfinite(cooks_d).all()
+
+    assert ((leverage >= 0) & (leverage <= 1)).all()
+    assert (cooks_d >= 0).all()
+
+    # Hat-matrix trace equals the number of model parameters.
+    np.testing.assert_allclose(
+        leverage.sum(),
+        result.df_model + 1,
+        rtol=0,
+        atol=1e-7,
+    )
