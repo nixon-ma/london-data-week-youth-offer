@@ -2418,7 +2418,7 @@ B3 has lower annual MAE than M1 in all four years but smaller error in only 69/1
 
 ---
 
-# 23. D9d — Explanatory E1–E4 implementation and numerical QA evidence
+# 23. D9d — Explanatory E1–E4 implementation, QA and first-pass diagnostics
 
 ## 23.1 Scope and model specification
 
@@ -2442,7 +2442,7 @@ The locally reported fits converged and the model matrix was confirmed full-colu
 | E3 | 224 × 38 | 38 | 37 | 186 | 1.583911 |
 | E4 | 224 × 41 | 41 | 40 | 183 | 1.596351 |
 
-The relatively high ratios motivate later overdispersion and residual diagnostics; they do **not** validate naive iid-binomial uncertainty or establish comparative model superiority. E4's marginally higher ratio than E3 is not, on its own, a verdict on its incremental fit: the statistic is divided by differing residual degrees of freedom. Deviance reductions and rate-scale residuals have not yet been assessed in this checkpoint.
+The relatively high ratios motivate later overdispersion and residual diagnostics; they do **not** validate naive iid-binomial uncertainty or establish comparative model superiority. E4's marginally higher ratio than E3 is not, on its own, a verdict on its incremental fit: the statistic is divided by differing residual degrees of freedom. Deviance reductions and rate-scale residuals were not part of the initial fitting checkpoint; subsequent evidence is in §23.5.
 
 ## 23.3 Independent numerical verification
 
@@ -2470,11 +2470,70 @@ python -m unittest discover -s tests -p 'test_*.py' -v
 python src/run_pipeline.py
 ```
 
-The pipeline builds and checks the common explanatory model table, then fits and structurally/numerically verifies E1–E4 before performing the separate, development-only predictive workflow. Existing development prediction and evaluation definitions are unchanged. The last command checks the integrated pipeline; this evidence section does not claim it was independently rerun in the current documentation review.
+The pipeline builds and checks the common explanatory model table, then fits and structurally/numerically verifies E1–E4 before performing the separate, development-only predictive workflow. Existing development prediction and evaluation definitions are unchanged. The last command checks the integrated pipeline. The project author subsequently reported that the final local pipeline and test suite passed after diagnostic QA additions; this review did not independently rerun the complete raw-data pipeline.
 
-**Outstanding frozen analyses:** quantify the predeclared `E1 -> E3`, `E2 -> E3` and `E3 -> E4` binomial deviance reductions and within-sample rate-scale MAE/RMSE; assess residuals by fitted value, cohort denominator, borough and year, with within-borough patterns and influence; implement borough-level trajectory block bootstrap (approximately 2,000 refits, subject to stability), a borough-clustered covariance cross-check, and the D9a6 sensitivity set. Interpret substantive composition and year effects on the probability / percentage-point scale, with uncertainty and no causal language. Freeze the common reference distribution before producing any optional adjusted borough summaries.
+**Outstanding frozen analyses:** §23.5 records the completed descriptive comparisons and first-pass diagnostics. Next, define probability-scale effects/contrasts and any optional reference distribution, implement whole-borough block-bootstrap inference (approximately 2,000 refits subject to stability), the borough-clustered covariance cross-check and the full D9a6 sensitivity set. Do not make causal or naive-binomial inference claims.
 
 **Boundary:** The seven-cohort 2022/23 observation is permitted in the *explanatory* track. This does **not** release the 2022/23 *predictive* final temporal evaluation. No final-cohort predictive error, method comparison or performance claim is part of D9d. Git commit/push status is independent of the analytical evidence recorded here.
+
+
+## 23.5 Subsequent D9d fit comparison, residual and influence diagnostics — locally verified
+
+**Scope and provenance.** All four frozen grouped-binomial explanatory fits use the same 224 borough × KS4-cohort records. The numerical results below were reported from the local pipeline by the project author after QA and are **in-sample**, not predictive evaluations. Six synthetic diagnostic tests, the full local test suite and the integrated pipeline were reported passing; this documentation update does not claim an independent remote execution of the raw-data pipeline.
+
+### Fit comparison
+
+| Model | Number of parameters | Binomial deviance | Equal-borough-year MAE (pp) | Equal-borough-year RMSE (pp) |
+|---|---:|---:|---:|---:|
+| E1 — cohort-year FE | 7 | 1462.731158 | 0.937282 | 1.200378 |
+| E2 — borough FE | 32 | 463.408094 | 0.567593 | 0.716440 |
+| E3 — borough + cohort-year FE | 38 | 295.864622 | 0.447924 | 0.566222 |
+| E4 — E3 + composition | 41 | 293.374646 | 0.447420 | 0.564119 |
+
+| Nested comparison | Deviance reduction | Added parameters | Meaning |
+|---|---:|---:|---|
+| E1 → E3 | 1166.866536 | 31 | Borough structure improves fit conditional on common cohort years |
+| E2 → E3 | 167.543472 | 6 | Common cohort-year structure improves fit conditional on borough |
+| E3 → E4 | 2.489976 | 3 | Composition adds little further in-sample fit conditional on both FE sets |
+
+Deviance reduction is the **reduced-model deviance minus full-model deviance**, with all 224 rows held constant. These are **conditional, nested fit comparisons**, not an additive partition of explained variance or a likelihood-ratio inference under valid independent-binomial variance. No naive p-values are interpreted. The composition block's modest fit increment alone neither proves absence of association nor justifies its post-hoc removal.
+
+MAE/RMSE are computed from observed adverse rate minus fitted probability, multiplied by 100 to obtain **percentage points**; borough-years receive equal weight **in these error summaries**. The fitted grouped-binomial likelihood continues to use the exact adverse counts and denominators. These are not out-of-sample predictive scores.
+
+### E4 residual distribution and dependence screening
+
+- **Pearson dispersion:** `sum(Pearson residual²) / 183 = 1.596351`, above the simple independent grouped-binomial benchmark. This is extra-binomial variation, not by itself proof of an incorrectly specified mean.
+- **Residual versus fitted probability / denominator plots:** no conspicuous overall curvature or denominator-related pattern on visual inspection. This does not rule out subtler misspecification or heterogeneous variance.
+- **Borough × year heatmap:** some runs of same-signed residuals, reversals and isolated extreme borough-years. Because the borough/year fixed-effect score equations constrain aggregated **observed-minus-fitted counts**, such residual sign patterns are not independently identified changes in borough trajectories.
+- **Within-borough descriptive lag-1 correlation:** `-0.035173` for `32 × 6 = 192` overlapping adjacent-cohort Pearson-residual pairs. There is little **pooled linear** persistence, but this does not establish residual independence or rule out borough-specific temporal effects. The seven observations per borough, overlapping pairs and FE fitting constraints limit interpretation.
+
+### E4 single-row influence screening
+
+`result.get_influence().summary_frame()` supplied GLM leverage (`hat_diag`) and approximate Cook's distance (`cooks_d`). QA checked index alignment, 224 rows, finite non-negative Cook's distances, leverage within [0, 1], and leverage sum = **41** fitted parameters (average leverage ≈ 0.1830).
+
+| Borough | Cohort | Pearson residual | Leverage | Cook's distance |
+|---|---|---:|---:|---:|
+| Enfield | 2016/17 | -3.570312 | 0.212428 | 0.106478 |
+| Tower Hamlets | 2019/20 | +3.320950 | 0.184279 | 0.074496 |
+| Southwark | 2017/18 | +3.274995 | 0.171102 | 0.065146 |
+| Havering | 2018/19 | -2.921832 | 0.180027 | 0.055752 |
+| Camden | 2021/22 | -2.910220 | 0.177701 | 0.054287 |
+| Harrow | 2019/20 | +2.912018 | 0.156377 | 0.045444 |
+| Hackney | 2022/23 | +2.262182 | 0.211837 | 0.042564 |
+| Enfield | 2022/23 | -2.114882 | 0.226861 | 0.041403 |
+| Havering | 2022/23 | +2.199439 | 0.202322 | 0.037517 |
+| Brent | 2020/21 | -2.457722 | 0.166723 | 0.035375 |
+
+These are the **ten highest** local Cook's distances. Their leverage is not exceptionally high relative to the model average, while many have large residuals. Influence is an approximate **one-observation deletion** measure; it is **not** a substitute for deleting whole borough trajectories or cohort years. Repeated observations, overdispersion and common-year shocks limit simplistic Cook's-distance thresholds. No observations were deleted and the E4 mean specification was not changed.
+
+### Verification, reproducibility and remaining analysis
+
+- `src/youth_offer/explanatory_diagnostics.py` contains the fit comparisons, rate-scale errors, Pearson residuals/dispersion, residual table, lagged-residual pairs/correlation and influence table. `src/youth_offer/explanatory_plots.py` contains the two-panel scatterplot and borough × year heatmap. `src/run_pipeline.py` calls these after fitting E1–E4.
+- The `qa.py` checks compare individual Pearson residuals and Pearson chi-square with `statsmodels`, check row alignment and reconstruct MAE/RMSE, and check leverage trace/ranges and finite Cook's distances. The **six** raw-data-independent tests in `tests/test_explanatory_diagnostics.py` cover known rate-error and deviance values, source and prediction-index mismatches, Pearson residual/dispersion known answers and invalid inputs, and lag-pair construction on a shuffled complete panel.
+- **Locally reported validation:** all six diagnostic tests passed, as did the full test suite and `python src/run_pipeline.py` after final input-validation fixes. To reproduce, provide `data/raw/key-stage-4-destination-measures_2023-24.zip` and run `python -m unittest discover -s tests -p 'test_*.py' -v` and `python src/run_pipeline.py` from the repository root. Generated plots under `outputs/explanatory/` are git-ignored; numeric summaries currently print to standard output and are recorded here rather than exported as a separate diagnostic results file.
+- **Conclusion / checkpoint:** E3's borough/year structure improves in-sample fit substantially; the E4 composition block yields only a small extra deviance reduction. Dispersion above one and several influential borough-years require planned inferential and group-deletion sensitivity checks. No evidence currently warrants reopening the frozen E4 mean specification, but full adequacy, effect significance, independent errors, causality and predictive utility have **not** been established.
+- **Pending frozen work:** define probability-scale associations and adjusted cohort-year contrasts; implement approximately 2,000 whole-borough-trajectory bootstrap refits subject to stability, a borough-clustered covariance cross-check, and all six D9a6 sensitivity checks (equal-weight rate regression, disadvantage replacing FSM, leave-one-borough, leave-one-cohort, joint 2019/20–2020/21 regime exclusion and linear cohort trend). Resampling boroughs does not create new independent common-year regimes. Freeze a common reference distribution before optional adjusted borough summaries.
+- **Predictive holdout boundary:** using 2022/23 outcomes in all-seven-cohort **explanatory** fits and their diagnostics is explicitly permitted. No 2022/23 **predictive** score, forecast-method comparison or final evaluation was constructed or examined. That boundary remains locked until the separate pre-final audit and formal release.
 
 ---
 
@@ -2492,4 +2551,4 @@ Proceed in the order:
 
 **problem understanding → raw-data understanding → population/outcome decisions → data-quality audit → EDA → modelling question → validation design → implementation → final audit**
 
-**D9c predictive development metrics and D9d explanatory E1–E4 fitting/numerical QA are implemented and locally verified.** Maintain the four frozen predictive methods and explanatory specifications; complete explanatory diagnostics/inference/robustness and the pre-final predictive audit before separately authorising the locked 2022/23 predictive evaluation.
+**D9c predictive development metrics and D9d explanatory E1–E4 fitting, numerical QA, fit comparisons and first-pass diagnostics are locally verified.** Maintain frozen models; next define probability-scale estimands and complete explanatory uncertainty and robustness before the pre-final predictive audit and separate authorisation of the still-locked 2022/23 predictive evaluation.

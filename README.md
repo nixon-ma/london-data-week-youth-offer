@@ -2,7 +2,7 @@
 
 A reproducible data-science rebuild of a London Data Week 2026 hackathon project. It examines variation in Key Stage 4 (KS4) destinations across London boroughs and evaluates whether next-cohort adverse destination rates can be forecast from historical information.
 
-> **Project status:** D1–D9c completed; D9d explanatory-model implementation in progress. The 2022/23 **predictive** evaluation remains locked. This is an analysis in development, not an operational council forecasting or intervention-allocation tool.
+> **Project status:** D1–D9c completed; D9d explanatory-model fitting, fit comparisons and first-pass residual/influence diagnostics locally verified. Explanatory inference and predeclared robustness remain **pending**. The 2022/23 **predictive** evaluation remains locked. This is an analysis in development, not an operational council forecasting or intervention-allocation tool.
 
 ## What are we measuring?
 
@@ -35,7 +35,9 @@ These are **in-sample explanatory fits**, not next-year forecasts. E4 uses compo
 
 The special-school share is a **structural population-composition adjustment**, not an intervention target. An association with that share, if found, would not imply that changing special-school provision reduces adverse outcomes.
 
-Explanatory conclusions require uncertainty, residual and influence diagnostics and the predeclared robustness checks. Good in-sample fit alone does not establish a meaningful association, a causal effect or future predictive accuracy.
+Initial explanatory results show substantially improved in-sample fit from borough and cohort-year effects; E4's composition block adds little further deviance reduction after those effects. E4's in-sample MAE/RMSE are approximately **0.447/0.564 percentage points**, with Pearson dispersion approximately **1.60**. These are **fit diagnostics, not inference-qualified effects or forecasts**; see [DATA_AUDIT.md §23.5](DATA_AUDIT.md#235-subsequent-d9d-fit-comparison-residual-and-influence-diagnostics--locally-verified).
+
+Substantive explanatory conclusions still require uncertainty and predeclared robustness checks. Good in-sample fit alone does not establish a meaningful association, a causal effect or future predictive accuracy.
 
 ### Predictive models: B1–B3 and M1
 
@@ -64,5 +66,7 @@ It **cannot establish which intervention will reduce adverse destinations**. Ass
 - [DATA_AUDIT.md](DATA_AUDIT.md) — source-data audit, construction checks, modelling evidence and implementation checkpoints.
 - [src/run_pipeline.py](src/run_pipeline.py) — current reproducible pipeline entry point.
 - [src/youth_offer/](src/youth_offer/) and [tests/](tests/) — implementation and tests.
+
+To reproduce locally, place the source ZIP at `data/raw/key-stage-4-destination-measures_2023-24.zip` and run `python -m unittest discover -s tests -p 'test_*.py' -v`, then `python src/run_pipeline.py` from the repository root. Generated files under `outputs/` are git-ignored; diagnostic results are documented in `DATA_AUDIT.md` §23.5. Environment/dependency packaging is still pending.
 
 The current rebuild is deliberately distinct from the original time-limited hackathon implementation.

@@ -983,7 +983,7 @@ The results do not demonstrate that FSM/SEN add or lack incremental predictive v
 
 # D9d — Explanatory GLM implementation and numerical QA checkpoint
 
-**Status:** E1–E4 fitting and structural/numerical QA implemented and locally verified. This is an implementation checkpoint, **not** completion of explanatory evaluation or inference.
+**Status:** E1–E4 fitting and structural/numerical QA implemented and locally verified; subsequent first-pass fit comparisons and diagnostics are recorded under D9d2. The original checkpoint is **not** completion of explanatory inference.
 
 **Evidence:** `DATA_AUDIT.md` §23; `src/youth_offer/explanatory.py`, `src/youth_offer/qa.py`, `src/run_pipeline.py` and `tests/test_explanatory.py`.
 
@@ -996,9 +996,24 @@ The results do not demonstrate that FSM/SEN add or lack incremental predictive v
 
 **Verification:** All four fits converged and passed dimension, degrees-of-freedom, full-rank and independent numerical QA. E1/E2 fitted rates match independently pooled counts; E3 borough and year fitted-count margins match observed margins; E4 satisfies all 41 grouped-binomial score equations to numerical tolerance. The permanent synthetic `unittest` module covers specification/row alignment, these identities, corrupted-count rejection and rank-deficiency rejection. See §23 for measured discrepancies, dispersion diagnostics and reproducibility commands.
 
-**Interpretation and scope:** These checks establish implementation consistency, not substantive effects, causal relationships or valid naive-binomial standard errors. Remaining under the **unchanged** D9a/D8 plan are deviance and rate-error comparisons, residual/influence/overdispersion diagnostics, borough-block-bootstrap inference and clustered-covariance cross-check, predeclared robustness, and probability-scale reporting. Do not select or drop the E4 composition variables based on initial dispersion or significance.
+**Interpretation and scope:** These checks establish implementation consistency, not substantive effects, causal relationships or valid naive-binomial standard errors. D9d2 records the subsequent fit and residual/influence diagnostics. Borough-block-bootstrap inference, clustered-covariance cross-check, predeclared robustness and probability-scale reporting remain outstanding. Do not select or drop E4 composition variables based on initial dispersion or significance.
 
 **Predictive boundary:** Including 2022/23 in the seven-cohort *explanatory* fits is permitted. The separate 2022/23 *predictive* evaluation remains locked, with no final-year predictive performance calculated or inspected. Code/documentation commit status is not implied by this checkpoint.
+
+
+## D9d2 — Fit comparisons and first-pass residual/influence checkpoint
+
+**Status:** Descriptive explanatory fit comparisons, residual/temporal screening, influence screening and corresponding QA completed and locally verified. **Explanatory uncertainty, substantive effects and predeclared robustness remain pending.**
+
+**Evidence:** `DATA_AUDIT.md` §23.5; `src/youth_offer/explanatory_diagnostics.py`, `src/youth_offer/explanatory_plots.py`, `src/youth_offer/qa.py`, `tests/test_explanatory_diagnostics.py` and `src/run_pipeline.py`.
+
+**Findings:** E1 → E3 deviance reduction **1166.866536** (+31 parameters); E2 → E3 **167.543472** (+6); E3 → E4 **2.489976** (+3). The equal-borough-year E4 in-sample MAE/RMSE are **0.447420 / 0.564119 percentage points**. E4 Pearson dispersion is **1.596351**; pooled within-borough lag-1 Pearson-residual correlation is **-0.035173** (192 overlapping adjacent-cohort pairs); maximum single-row Cook's distance is **0.106478** (Enfield, 2016/17). See §23.5 for observation-level evidence and caveats.
+
+**Decision:** Retain the frozen E1–E4 mean structures and D8/D9a validation plan unchanged. Borough/year effects substantially improve explanatory in-sample fit; composition has a modest incremental fit effect after both FE sets. The comparisons do not quantify causal contributions, unique explained-variance shares, coefficient significance or forecasting advantage. Do not drop the composition block, alter the mean specification or exclude borough-years on the basis of these diagnostics. Extra-binomial dispersion, potential within-borough dependence and influential observations remain live concerns, despite no obvious major fitted-probability/denominator residual pattern.
+
+**Next:** Predefine common interpretable probability-scale estimands/contrasts; use the D9a4 whole-borough trajectory bootstrap (approximately 2,000 refits subject to stability), borough-clustered covariance cross-check and full D9a6 robustness set, especially whole-borough and whole-cohort deletion checks. Seven common cohort-year regimes remain a hard inference limitation.
+
+**Boundary:** 2022/23 is included in explanatory fitting and diagnostics only; its **predictive** final evaluation remains locked. Tests and pipeline were reported passing locally, not independently executed on the remote repository.
 
 ---
 
@@ -1018,4 +1033,4 @@ Proceed in the order:
 
 **problem understanding → raw-data understanding → population/outcome decisions → data-quality audit → EDA → modelling question → validation design → implementation → final audit**
 
-**D9c predictive development evaluation and D9d E1–E4 fitting/numerical QA are implemented and locally verified.** Next, complete the explanatory fit comparisons, diagnostics, inference and robustness under frozen D9a, alongside the pre-final predictive audit. Do not calculate or inspect 2022/23 predictive performance until the final boundary is explicitly released after all pre-final checks.
+**D9c predictive development evaluation and D9d E1–E4 fitting/numerical QA, fit comparisons and first-pass diagnostics are locally verified.** Next define probability-scale estimands and complete explanatory inference and robustness, followed by the pre-final predictive audit. Do not calculate or inspect 2022/23 predictive performance until its final boundary is explicitly released.
