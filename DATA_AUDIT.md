@@ -2537,7 +2537,7 @@ These are the **ten highest** local Cook's distances. Their leverage is not exce
 
 ---
 
-# 24. D9e — Explanatory estimand and inference design review (proposed; not implemented)
+# 24. D9e — Explanatory estimand and inference design (accepted methodology; not implemented)
 
 ## 24.1 Purpose, provenance and scope
 
@@ -2588,7 +2588,7 @@ Preserve **all six** D9a6 analyses, with no post-hoc selection. For leave-one-bo
 
 Report E1–E4 *in-sample model-fit reductions* separately from adjusted probability contrasts and effect/uncertainty tables. Show the interval, effect magnitude, direction and changes under every predeclared sensitivity without a model-selection tournament, uncorrected multiple-testing claims or causal phrasing. A small association with a narrow model-conditional interval need not imply substantial policy usefulness. Grouped composition is not an individual pupil effect. The measured outcome includes **activity not captured** and is **not directly NEET**. 2022/23 explanatory use remains legitimate; the separate 2022/23 **predictive final evaluation remains locked**.
 
-**Status:** The D9e design is a **reviewed proposal** to accept before implementation, not an implementation or statistical result. The forthcoming work must include deterministic synthetic tests for paired contrasts, equal weights, row alignment, changed-share support, duplicate-borough FE identities, whole-trajectory retention, bootstrap failure reporting and the locked-predictive boundary.
+**Status:** The D9e methodology is **accepted for implementation**, but is not yet implemented or numerically verified. The forthcoming work must include deterministic synthetic tests for paired contrasts, equal weights, row alignment, changed-share support, duplicate-borough FE identities, whole-trajectory retention, bootstrap failure reporting and the locked-predictive boundary.
 
 ---
 
@@ -2606,4 +2606,4 @@ Proceed in the order:
 
 **problem understanding → raw-data understanding → population/outcome decisions → data-quality audit → EDA → modelling question → validation design → implementation → final audit**
 
-**D9c predictive development metrics and D9d explanatory E1–E4 fitting, numerical QA, fit comparisons and first-pass diagnostics are locally verified.** D9e probability-scale estimands/inference/robustness design in §24 is **proposed pending user approval and implementation**. Preserve frozen mean models and the locked 2022/23 predictive final evaluation until explicitly released after the separate pre-final audit.
+**D9c predictive development metrics and D9d explanatory E1–E4 fitting, numerical QA, fit comparisons and first-pass diagnostics are locally verified.** D9e probability-scale estimands/inference/robustness design in §24 is **accepted for implementation, with numerical results still pending**. Preserve frozen mean models and the locked 2022/23 predictive final evaluation until explicitly released after the separate pre-final audit.

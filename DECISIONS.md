@@ -1019,7 +1019,7 @@ The results do not demonstrate that FSM/SEN add or lack incremental predictive v
 
 # D9e — Probability-scale explanatory estimands and inference plan
 
-**Status:** Proposed following multi-pass methodological review; review and accept before implementation. No D9e estimands, intervals or robustness results have yet been calculated.
+**Status:** Accepted methodological specification; implementation, numerical verification, uncertainty intervals and robustness checks remain pending. No D9e effects or intervals have yet been calculated.
 
 **Evidence:** `DATA_AUDIT.md` §24 (raw reference-profile support, rationale and inference limitations); existing D7a, D8e–D8g, D9a1–D9a6 and D9d2 remain frozen.
 
@@ -1079,4 +1079,4 @@ Proceed in the order:
 
 **problem understanding → raw-data understanding → population/outcome decisions → data-quality audit → EDA → modelling question → validation design → implementation → final audit**
 
-**D9c development and D9d explanatory fitting/first-pass diagnostics are locally verified.** D9e probability-scale estimands/inference/robustness rules have been reviewed but remain a **proposed specification pending approval and implementation**. Complete explanatory inference and audit before the separate predictive pre-final audit; do not calculate or inspect 2022/23 predictive performance until explicitly released.
+**D9c development and D9d explanatory fitting/first-pass diagnostics are locally verified.** The D9e probability-scale estimands, inference and robustness specification is **accepted for implementation but not yet numerically verified**. Complete explanatory inference and audit before the separate predictive pre-final audit; do not calculate or inspect 2022/23 predictive performance until explicitly released.
