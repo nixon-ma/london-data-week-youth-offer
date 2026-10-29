@@ -1017,6 +1017,52 @@ The results do not demonstrate that FSM/SEN add or lack incremental predictive v
 
 ---
 
+# D9e — Probability-scale explanatory estimands and inference plan
+
+**Status:** Proposed following multi-pass methodological review; review and accept before implementation. No D9e estimands, intervals or robustness results have yet been calculated.
+
+**Evidence:** `DATA_AUDIT.md` §24 (raw reference-profile support, rationale and inference limitations); existing D7a, D8e–D8g, D9a1–D9a6 and D9d2 remain frozen.
+
+## D9e1 — Adjusted cohort-year quantities
+
+Use frozen E4. Let the common reference consist of all **224 actual borough–cohort profiles** `(borough identity, FSM share, Identified-SEN share, special-school share)` with **equal weight 1/224**. For each of the seven cohort-year indicators, predict E4 probability for every profile while holding its borough identity and three composition shares fixed; average the 224 predictions. The resulting standardised probability describes an **equal-borough, equal-observed-composition-profile average**, not the actual pupil-weighted London rate.
+
+Report the seven adjusted probabilities, their 2016/17-reference differences (six), and adjacent-cohort differences (six), all in percentage points. Highlight 2022/23 − 2016/17 as the endpoint contrast. The same reference profiles/weights are mandatory for both sides of any given comparison. These are conditional **observed-cohort contrasts**, not causal or future-regime effects. No new year effects, interactions or predictors are introduced.
+
+A single fixed Camden profile is mathematically permissible but not the selected London-wide reference. Because the logit is nonlinear, the reference affects percentage-point **magnitudes**. Under the frozen no-interaction E4, a given year coefficient contrast has the same sign at every profile; averaging does **not** introduce heterogeneous year effects.
+
+## D9e2 — Composition associations
+
+For each observed reference profile, compare E4 probability before and after changing **one** covariate while keeping borough, year and the other two composition shares fixed. Average its probability differences over the same 224 equally weighted profiles and express in percentage points:
+
+- FSM-eligible share: **+0.02** in the 0–1 share representation (+2 percentage points);
+- Identified-SEN share: **+0.02** (+2 percentage points);
+- standalone special-school share: **+0.0025** (+0.25 percentage points), reported as a **secondary structural adjustment**, not an intervention target.
+
+These sizes are comparable to the two-way-residualised share variation checked in `DATA_AUDIT.md` §24, and all corresponding changed shares remain within `[0,1]` in the observed reference. This is a **modelled associational comparison**, not a manipulation of real pupils, an individual-level effect or an intervention effect. Changing one share while the others are fixed is a partial model contrast; observed joint-support and substantive plausibility remain limitations. Since E4 has no interactions, every profile's discrete association has the same sign as its corresponding logit coefficient; averaging only converts to a representative probability-point magnitude.
+
+## D9e3 — Bootstrap uncertainty and interpretation
+
+Retain D9a4's primary **whole-borough-trajectory pairs bootstrap**: draw 32 borough trajectories with replacement, retaining all seven cohorts per draw, refit the same E4 mean structure, and aim for **2,000 predeclared, reproducible draws**, subject to convergence/rank/stability checks. When a borough is drawn more than once, give each *drawn copy* a distinct temporary fixed-effect identity; retain its original outcomes and composition. Never incorrectly merge duplicate draws or ask a bootstrap fit to predict an omitted borough's unestimated fixed effect.
+
+Within each replicate, calculate D9e1/D9e2 estimates using that replicate's **drawn profile multiset** with equal weight per profile; use exactly the same drawn set on both sides of each contrast. This allows fixed effects to be estimated for all evaluation profiles. The original point estimates use the fixed 224-profile empirical reference; resampling the reference as well means the bootstrap approximates variability of a **sample-standardised equal-borough statistic**, not uncertainty conditional on the original 224 profiles being fixed.
+
+Propose 95% **percentile borough-resampling intervals**, using replicate 2.5th/97.5th percentiles on the contrast itself (not separate subtraction of interval endpoints). Record the RNG seed, total attempted/successful/failed draws, convergence/rank problems and distribution of estimates. Do not silently draw until 2,000 successes or suppress failures; substantial instability triggers methodological review **before** interpreting intervals, not a change of model chosen for favourable results.
+
+Preserve the frozen **borough-clustered covariance cross-check** with an explicit finite-cluster adjustment; use a compatible probability-scale transformation/delta calculation where numerically valid. This is secondary, not an independent cure for few clusters or common-year dependence; do not rely on naive grouped-binomial standard errors.
+
+**Scope:** These are conditional borough-resampling uncertainty summaries assuming sufficient independence across borough histories **after the modelled cohort effects**. There are only 32 observed boroughs, comprising the full London borough system, and **seven shared cohort regimes**. Resampling boroughs cannot quantify uncertainty over unobserved year shocks or support confidence statements about arbitrary future years. Common-year shocks, fixed-effect nonlinear estimation and limited clusters remain limitations; interpret intervals alongside whole-cohort and regime sensitivities. Avoid overconfident significance claims.
+
+## D9e4 — Frozen robustness and reporting rules
+
+Run **all six D9a6 checks** without selecting preferred specifications: (1) equal-weight adverse-rate OLS with matching structural terms; (2) approximate disadvantage replacing FSM; (3) 32 leave-one-borough-out refits; (4) seven leave-one-cohort-out refits; (5) joint removal of 2019/20–2020/21; (6) one linear cohort-year trend in place of categorical year effects.
+
+For group deletion, compare full and reduced fits on a **common retained reference set** for any estimand defined in both models. When a categorical cohort is deleted, contrasts involving that cohort are **unavailable** (not imputed). The linear-trend alternative evaluates only its own trend-constrained version of the same calendar contrast. The disadvantage association is an alternative proxy, **not the identical FSM estimand**. Inspect effect magnitude, direction, uncertainty and stability without post-hoc thresholds or multiple-testing claims.
+
+Report D9d structural-fit evidence separately from these E4 associations. The primary outcome remains **not in a recorded sustained destination**, including activity not captured—not a direct NEET rate. Neither D9e nor the explanatory inclusion of 2022/23 releases the **locked 2022/23 predictive evaluation**. Optional adjusted **borough** summaries require a separate, common year/composition reference specification before reporting; D9e1's shared-year profiles do not automatically define that borough-ranking estimand.
+
+---
+
 # Open Questions
 
 These are not yet accepted decisions.
@@ -1033,4 +1079,4 @@ Proceed in the order:
 
 **problem understanding → raw-data understanding → population/outcome decisions → data-quality audit → EDA → modelling question → validation design → implementation → final audit**
 
-**D9c predictive development evaluation and D9d E1–E4 fitting/numerical QA, fit comparisons and first-pass diagnostics are locally verified.** Next define probability-scale estimands and complete explanatory inference and robustness, followed by the pre-final predictive audit. Do not calculate or inspect 2022/23 predictive performance until its final boundary is explicitly released.
+**D9c development and D9d explanatory fitting/first-pass diagnostics are locally verified.** D9e probability-scale estimands/inference/robustness rules have been reviewed but remain a **proposed specification pending approval and implementation**. Complete explanatory inference and audit before the separate predictive pre-final audit; do not calculate or inspect 2022/23 predictive performance until explicitly released.

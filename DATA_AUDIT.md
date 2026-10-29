@@ -2537,7 +2537,62 @@ These are the **ten highest** local Cook's distances. Their leverage is not exce
 
 ---
 
-# 24. Current open questions
+# 24. D9e — Explanatory estimand and inference design review (proposed; not implemented)
+
+## 24.1 Purpose, provenance and scope
+
+This design review follows the verified E1–E4 explanatory fits, D9d2 diagnostics and the frozen D7a/D8e–D8f/D9a rules. It defines **what** model quantities would mean before estimating uncertainty or running robustness checks. Source inspection used GitHub branch `d9-implementation` at commit `28289ecd0a2602e32026df75516a3ed31336b845`; the raw ZIP was independently read for the 224 target borough–cohort **composition** profiles only. No D9e fitted effects, inferential intervals or robustness results were computed, and no 2022/23 predictive evaluation was opened.
+
+Two reportable questions follow: (i) How did the **model-adjusted adverse probability** differ across the seven observed cohorts for a common borough/composition reference? (ii) What **modelled percentage-point probability difference** accompanies a predeclared, plausible change in one composition share, conditional on borough/year fixed effects and the other shares? These are associations, not causal, individual-level or forecasting claims.
+
+## 24.2 Common standardisation and probability-scale definitions
+
+Let the 224 original explanatory rows index reference profiles `i=(b,t)` with composition vector `x_i=(fsm_share, identified_sen_share, special_school_share)` and fixed borough ID `b(i)`; give every reference profile weight `1/224` (hence every borough is weighted equally across its seven profiles). Let `g(z)=1/(1+exp(-z))`, and `eta(b,s,x)` be E4's fitted linear predictor for borough `b`, evaluated at cohort year `s` and composition `x`.
+
+**Adjusted year probability:** `P_s = (1/224) * sum_i g(eta(b(i),s,x_i))`. Report `100*P_s` (%) for all seven years; report `100*(P_s-P_201617)` (pp) for each later year and `100*(P_s-P_previous)` (pp) for each adjacent pair. The endpoint `2022/23 − 2016/17` is the headline contrast. Evaluating the **same** borough/composition multiset for each `s` isolates the year fixed-effect contrast *within E4*, rather than changing population composition. It is not an observed London-wide pupil-weighted rate. Different valid references change percentage-point magnitudes because logit is nonlinear, although no-interaction E4 implies each profile's year contrast shares the same sign.
+
+**Composition difference for variable `k` and increment `d_k`:** `M_k(d_k) = (100/224) * sum_i [g(eta(b(i),t(i),x_i + d_k*e_k)) - g(eta(b(i),t(i),x_i))]` (pp). The comparison changes one share, holding its borough/year and other shares fixed. The mean is the average of *paired probability differences*, not a difference in log-odds. E4's constant logit slope implies no genuinely heterogeneous coefficient signs across profiles; nonlinearity creates different probability-point sizes.
+
+A fixed profile such as Camden in 2016/17 is mathematically valid but answers a Camden-profile question. The 224 equally weighted profiles are more suitable for the predeclared **average-borough** structural question. Pupil-weighted standardisation would answer a different policy question and is not primary. Optional *adjusted borough rankings* would require an additional separate common year/composition reference and are **not selected** by this specification.
+
+## 24.3 Independent composition-size check against the raw ZIP
+
+An audit-only read selected the seven target cohorts, London Local Authority rows, the frozen combined population, one sustained-destination row per relevant breakdown to avoid duplicated denominators, and the exact standalone-special population. It reconstructed the 224 original composition profiles from exact group `cohort_count` values. The comparisons below are input support checks, **not model effects**:
+
+| Covariate | Min share | Max share | SD after two-way borough/year demeaning | D9e increment |
+|---|---:|---:|---:|---:|
+| FSM eligible | 0.062046 | 0.477124 | 0.01646 | +0.0200 |
+| Identified SEN | 0.047960 | 0.243697 | 0.01624 | +0.0200 |
+| standalone special-school share | 0.003677 | 0.055556 | 0.00272 | +0.0025 |
+
+All three adjusted-share comparisons keep each of the 224 values within `[0,1]`. The residual SDs reproduce D9a's rounded figures (1.65, 1.62 and 0.27 percentage points respectively). These simple bounds do **not** prove that every hypothetical joint composition is frequently observed; evaluate practical support during QA and interpret the resulting modelled comparisons as conditional, not interventions. The special-school association is a structural adjustment rather than a principal policy conclusion.
+
+## 24.4 Borough-bootstrap target, repeated fixed effects and interpretation
+
+D9a4 freezes whole-borough resampling, approximately 2,000 refits, with borough-clustered covariance as a cross-check. With E4 **borough fixed effects**, resampling rows independently is invalid, and evaluating the original 224 fixed borough profiles in a replicate omitting some boroughs requests **unestimated FE**. The coherent *pairs-cluster-bootstrap* procedure is:
+
+1. Draw 32 complete borough trajectories with replacement; keep every selected borough's **seven cohort observations**, original counts and denominators, and shares. Create **unique temporary FE IDs for duplicated draws** so each draw is an independent bootstrap copy of a seven-year trajectory; do not sum or otherwise alter its observed outcome counts.
+2. Refit the unchanged grouped-binomial E4 to the 224 sampled rows, check rank/convergence and model diagnostics. Because draws are whole seven-cohort trajectories, every sample retains the seven year levels.
+3. Use the **sampled profile multiset** as the reference for that replicate, including duplicate draws with multiplicity, and keep that set fixed between predictions on either side of *each* year/composition contrast. Save the resulting scalar contrasts and, as appropriate, adjusted rates.
+4. Use a reproducible RNG seed and a predeclared target of approximately 2,000 attempted replicates, with the 2.5th/97.5th percentiles of valid **replicate contrasts themselves** as proposed 95% percentile intervals. Report attempted/successful/failed counts, failure reasons and distributional anomalies; do not conceal failures or automatically replace them to achieve a cosmetically clean success count. Serious failure, singularity or instability triggers review before intervals are interpreted.
+
+The original `224`-profile point estimate standardises to the **empirical London borough/composition distribution**. The bootstrap's changing profile distribution estimates repeated-sampling variability of a **sample-standardised statistic**, not the variance of the original fixed-reference estimand holding those 224 profiles literally fixed. This distinction must be explicit in reporting. The procedure also relies on borough trajectories being sufficiently independent **conditional on modelled cohort-year structure**; all 32 boroughs are observed, not a probability sample. The resulting percentiles are therefore conditional **borough-resampling uncertainty summaries**, not design-based confidence bounds for the complete London population and not guarantees about new cohort regimes.
+
+Borough clustering does **not** generate new independent historical years. Only seven common cohort-year regimes exist; residual common-year dependence, year-regime uncertainty and nonlinear FE estimation remain limits. The year fixed effects absorb a shared *mean* time profile but cannot prove absence of residual common shocks. Avoid pretending two-way clustering on **seven** year groups would automatically solve this. The D9a6 leave-one-cohort, joint-regime exclusion and linear-trend checks are important complementary stress tests.
+
+For the frozen secondary covariance cross-check, use a finite-cluster correction and transform common-coefficient uncertainty to the **same probability-scale contrasts** where computationally stable. Do not use naive binomial standard errors. With 32 clusters and many borough FE, treat apparent precision or sandwich/percentile disagreement as a diagnostic, not an invitation to switch to more favourable intervals. Relevant background: Cameron & Miller (2015), *A Practitioner's Guide to Cluster-Robust Inference*, https://doi.org/10.3368/jhr.50.2.317; MacKinnon, Nielsen & Webb (2023), *Cluster-robust inference: A guide to empirical practice*, https://doi.org/10.1016/j.jeconom.2022.04.001.
+
+## 24.5 Comparable robustness targets and reporting discipline
+
+Preserve **all six** D9a6 analyses, with no post-hoc selection. For leave-one-borough/year or joint-regime exclusions, recalculate **both full-fit and reduced-fit contrasts over the same retained reference profiles**. A categorical-year contrast containing an omitted cohort is not defined in that reduced fit; mark **not estimable** rather than extrapolating. The linear-trend check can still evaluate an endpoint contrast but forces a different year structure, so a changed result reflects that constraint. With disadvantage replacing FSM, do not compare the two socioeconomic effects as though they were the exact same covariate or estimand; examine whether broader conclusions change. Equal-weight OLS tests a distinct rate-model/weighting combination rather than just one assumption at a time.
+
+Report E1–E4 *in-sample model-fit reductions* separately from adjusted probability contrasts and effect/uncertainty tables. Show the interval, effect magnitude, direction and changes under every predeclared sensitivity without a model-selection tournament, uncorrected multiple-testing claims or causal phrasing. A small association with a narrow model-conditional interval need not imply substantial policy usefulness. Grouped composition is not an individual pupil effect. The measured outcome includes **activity not captured** and is **not directly NEET**. 2022/23 explanatory use remains legitimate; the separate 2022/23 **predictive final evaluation remains locked**.
+
+**Status:** The D9e design is a **reviewed proposal** to accept before implementation, not an implementation or statistical result. The forthcoming work must include deterministic synthetic tests for paired contrasts, equal weights, row alignment, changed-share support, duplicate-borough FE identities, whole-trajectory retention, bootstrap failure reporting and the locked-predictive boundary.
+
+---
+
+# 25. Current open questions
 
 1. What exact common reference distribution / formula should be used if standardised adjusted borough summaries are included in final explanatory reporting?
 2. What exact public-facing label, if any, should refine “Outside recorded sustained destinations” without changing its frozen definition?
@@ -2545,10 +2600,10 @@ These are the **ten highest** local Cook's distances. Their leverage is not exce
 
 ---
 
-# 25. Workflow rule
+# 26. Workflow rule
 
 Proceed in the order:
 
 **problem understanding → raw-data understanding → population/outcome decisions → data-quality audit → EDA → modelling question → validation design → implementation → final audit**
 
-**D9c predictive development metrics and D9d explanatory E1–E4 fitting, numerical QA, fit comparisons and first-pass diagnostics are locally verified.** Maintain frozen models; next define probability-scale estimands and complete explanatory uncertainty and robustness before the pre-final predictive audit and separate authorisation of the still-locked 2022/23 predictive evaluation.
+**D9c predictive development metrics and D9d explanatory E1–E4 fitting, numerical QA, fit comparisons and first-pass diagnostics are locally verified.** D9e probability-scale estimands/inference/robustness design in §24 is **proposed pending user approval and implementation**. Preserve frozen mean models and the locked 2022/23 predictive final evaluation until explicitly released after the separate pre-final audit.
