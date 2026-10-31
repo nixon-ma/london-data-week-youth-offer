@@ -2,6 +2,7 @@ from pathlib import Path
 import pandas as pd
 from youth_offer import data, model_tables, baselines, predictive, evaluation, explanatory, explanatory_diagnostics, explanatory_plots, qa
 from youth_offer.predictive import DEVELOPMENT_TARGET_YEARS
+from youth_offer.explanatory_reporting import run_d9e_reporting
 
 
 def main() -> None:
@@ -53,6 +54,11 @@ def main() -> None:
     qa.assert_e4_score_equations(explanatory_table, result_e4, X_e4)
 
     print("E1-E4 QA passed.")
+
+    # D9e: frozen explanatory inference and robustness; no predictive final evaluation.
+    run_d9e_reporting(
+        explanatory_table, result_e4, X_e4, Path("outputs/explanatory/d9e")
+    )
 
     deviance_reduction_E1_E3 = explanatory_diagnostics.calculate_deviance_reduction(result_e1, result_e3)
     print(deviance_reduction_E1_E3)

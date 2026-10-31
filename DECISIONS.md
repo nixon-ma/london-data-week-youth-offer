@@ -1019,7 +1019,7 @@ The results do not demonstrate that FSM/SEN add or lack incremental predictive v
 
 # D9e — Probability-scale explanatory estimands and inference plan
 
-**Status:** Accepted methodological specification; implementation, numerical verification, uncertainty intervals and robustness checks remain pending. No D9e effects or intervals have yet been calculated.
+**Status:** Accepted methodology **implemented and verified at the exported-results level** (31 October 2026). D9e1–D9e4 were run locally; the supplied numerical exports have been audited independently. The original estimands and model specification remain frozen; detailed results, robustness and limitations are in D9e5 and `DATA_AUDIT.md` §24.6–§24.10.
 
 **Evidence:** `DATA_AUDIT.md` §24 (raw reference-profile support, rationale and inference limitations); existing D7a, D8e–D8g, D9a1–D9a6 and D9d2 remain frozen.
 
@@ -1061,6 +1061,20 @@ For group deletion, compare full and reduced fits on a **common retained referen
 
 Report D9d structural-fit evidence separately from these E4 associations. The primary outcome remains **not in a recorded sustained destination**, including activity not captured—not a direct NEET rate. Neither D9e nor the explanatory inclusion of 2022/23 releases the **locked 2022/23 predictive evaluation**. Optional adjusted **borough** summaries require a separate, common year/composition reference specification before reporting; D9e1's shared-year profiles do not automatically define that borough-ranking estimand.
 
+## D9e5 — Completed explanatory implementation and empirical checkpoint (31 October 2026)
+
+**Status and evidence:** D9e1–D9e4 were integrated into the locally executed explanatory pipeline. The author supplied its nine `outputs/explanatory/d9e/` exports for an independent **export-level** review; the raw-data pipeline was **not rerun independently in this review**. The original D9a/E4 mean structures and frozen D9e estimands were retained. The exports contain all **22** predeclared quantities (seven rates, six 2016/17 contrasts, six adjacent-year contrasts, three composition associations), complete bootstrap replicates and all six robustness families. See `DATA_AUDIT.md` §24.6–§24.10 for tables, numerical checks, filenames and limitations. Earlier D9d statements about inference being pending record the historical D9d checkpoint, not the current status.
+
+**Primary borough-bootstrap inference:** **2,000 attempted / 2,000 successful / zero failed** complete-trajectory resamples (seed `20261030`; 32 boroughs and seven years; 224 original profiles). Report 95% *percentile* intervals from paired replicate contrasts, allowing the empirical reference profiles to vary with each resample. Borough-clustered/delta intervals with finite-cluster adjustment are a secondary cross-check, not proof of independent common-year shocks.
+
+**Principal model-adjusted outcome finding:** Equal-profile standardised E4 adverse rate fell from **6.040% (2016/17)** to **5.352% (2020/21)**, then rose to **6.627% (2022/23)**. The **2022/23 − 2016/17** contrast is **+0.586 percentage points (pp)**, borough-bootstrap 95% interval **[+0.094, +1.027] pp**. The adjacent **2022/23 − 2021/22** contrast is **+0.700 pp**, interval **[+0.418, +0.998] pp**. These reflect observed-cohort model adjustments, not causal year effects or pupil-weighted London rates.
+
+**Composition:** Predicted paired differences are small and the 95% borough-bootstrap intervals all span zero: FSM +2 pp **+0.030 pp** [−0.026, +0.137]; Identified-SEN +2 pp **−0.025 pp** [−0.159, +0.087]; standalone special-school share +0.25 pp **−0.033 pp** [−0.111, +0.052]. These are **borough-level associational** model contrasts; none identifies pupil-level or intervention effects. The special-school share remains a secondary structural adjustment.
+
+**Frozen robustness decision:** All **43 alternative fits** (six prescribed families; **947** case/estimand output rows) were run. The endpoint remains positive under equal-weight OLS (**+0.475 pp**), the disadvantage-proxy alternative (**+0.991 pp**), every leave-one-borough-out case (**+0.501 to +0.651 pp**), each of five estimable leave-one-cohort-out cases (**+0.337 to +0.634 pp**), and joint 2019/20–2020/21 exclusion (**+0.537 pp**). **However, the predeclared linear cohort-trend model reverses its sign (−0.331 pp).** Therefore, the endpoint conclusion is **sensitive to temporal specification** and must not be described as universally robust. When omitting 2016/17 or 2022/23, the endpoint contrast is **not estimable**; no missing-year effects were extrapolated. The alternative disadvantage association is not the same FSM estimand. Robustness comparisons are point-estimate sensitivity checks, **not additional interval-based tests**.
+
+**Interpretive decision:** Preserve the frozen E4 mean model and report the observed nonlinear historical pattern with the above qualification; do not selectively adopt the model with the most favourable result. No causal, pupil-level, prediction, direct-NEET, multiple-testing-adjusted significance or future-regime uncertainty claim is supported. These borough-resampling intervals do not resolve seven shared cohort-year regimes, unobserved common shocks, finite-cluster limitations or the fact that all 32 London boroughs are included. The **2022/23 predictive final evaluation remains locked**; next is the separate predictive pre-final audit, not the final evaluation.
+
 ---
 
 # Open Questions
@@ -1079,4 +1093,4 @@ Proceed in the order:
 
 **problem understanding → raw-data understanding → population/outcome decisions → data-quality audit → EDA → modelling question → validation design → implementation → final audit**
 
-**D9c development and D9d explanatory fitting/first-pass diagnostics are locally verified.** The D9e probability-scale estimands, inference and robustness specification is **accepted for implementation but not yet numerically verified**. Complete explanatory inference and audit before the separate predictive pre-final audit; do not calculate or inspect 2022/23 predictive performance until explicitly released.
+**D9c development and D9d explanatory fitting/first-pass diagnostics remain locally verified; D9e explanatory estimation, 2,000-attempt inference and all six robustness families have now been implemented, and their supplied outputs numerically audited.** Preserve the frozen explanatory specification and proceed to the **separate predictive pre-final audit**. Do not calculate, inspect or release 2022/23 predictive final performance without explicit approval.

@@ -2537,11 +2537,11 @@ These are the **ten highest** local Cook's distances. Their leverage is not exce
 
 ---
 
-# 24. D9e — Explanatory estimand and inference design (accepted methodology; not implemented)
+# 24. D9e — Explanatory estimands, inference and empirical checkpoint (accepted methodology; exported results verified)
 
 ## 24.1 Purpose, provenance and scope
 
-This design review follows the verified E1–E4 explanatory fits, D9d2 diagnostics and the frozen D7a/D8e–D8f/D9a rules. It defines **what** model quantities would mean before estimating uncertainty or running robustness checks. Source inspection used GitHub branch `d9-implementation` at commit `28289ecd0a2602e32026df75516a3ed31336b845`; the raw ZIP was independently read for the 224 target borough–cohort **composition** profiles only. No D9e fitted effects, inferential intervals or robustness results were computed, and no 2022/23 predictive evaluation was opened.
+This design review follows the verified E1–E4 explanatory fits, D9d2 diagnostics and the frozen D7a/D8e–D8f/D9a rules. It defines **what** model quantities would mean before estimating uncertainty or running robustness checks. Source inspection used GitHub branch `d9-implementation` at commit `28289ecd0a2602e32026df75516a3ed31336b845`; the raw ZIP was independently read for the 224 target borough–cohort **composition** profiles only. **At this original design-review stage**, no D9e fitted effects, inferential intervals or robustness results were computed, and no 2022/23 predictive evaluation was opened. **The subsequent completed empirical checkpoint is documented in §24.6–§24.10.**
 
 Two reportable questions follow: (i) How did the **model-adjusted adverse probability** differ across the seven observed cohorts for a common borough/composition reference? (ii) What **modelled percentage-point probability difference** accompanies a predeclared, plausible change in one composition share, conditional on borough/year fixed effects and the other shares? These are associations, not causal, individual-level or forecasting claims.
 
@@ -2588,7 +2588,87 @@ Preserve **all six** D9a6 analyses, with no post-hoc selection. For leave-one-bo
 
 Report E1–E4 *in-sample model-fit reductions* separately from adjusted probability contrasts and effect/uncertainty tables. Show the interval, effect magnitude, direction and changes under every predeclared sensitivity without a model-selection tournament, uncorrected multiple-testing claims or causal phrasing. A small association with a narrow model-conditional interval need not imply substantial policy usefulness. Grouped composition is not an individual pupil effect. The measured outcome includes **activity not captured** and is **not directly NEET**. 2022/23 explanatory use remains legitimate; the separate 2022/23 **predictive final evaluation remains locked**.
 
-**Status:** The D9e methodology is **accepted for implementation**, but is not yet implemented or numerically verified. The forthcoming work must include deterministic synthetic tests for paired contrasts, equal weights, row alignment, changed-share support, duplicate-borough FE identities, whole-trajectory retention, bootstrap failure reporting and the locked-predictive boundary.
+**Subsequent status (31 October 2026):** The predeclared D9e design has been implemented. The author reported local tests and a complete production run; all nine D9e exports were supplied and independently checked for numerical consistency (see §24.6–§24.10). This is an export-level audit, not an independent rerun of the original raw-data pipeline. The separate 2022/23 predictive final evaluation remains locked.
+
+## 24.6 D9e implementation, output provenance and reproducibility
+
+**Evidence level.** The author reported a successful local production run and supplied the nine exported D9e files for independent **output-level** verification on **31 October 2026**. This checkpoint independently recalculated summary statistics from the supplied 2,000 bootstrap replicate rows and checked the internal consistency of the exported point estimates, intervals and sensitivity results; it **did not independently rerun the full raw-data pipeline or access the locked predictive final evaluation**. D9e methodological decisions in §24.1–§24.5 remain unchanged. Historical "pending" statements under D9d/early §24 describe the earlier stage.
+
+**Implementation:** `src/youth_offer/explanatory_estimands.py` contains paired year and composition predictions; `explanatory_inference.py` contains the complete-borough bootstrap and finite-cluster/delta cross-check; `explanatory_robustness.py` contains all six fixed sensitivities; `explanatory_reporting.py` writes outputs; `src/run_pipeline.py` calls this reporting step after E4 fitting and QA. The author reported the D9e module tests passing locally. Full-suite execution is not independently asserted in this export review. The model remains the **224-row grouped-binomial E4** with borough and categorical-year fixed effects and the three original composition shares.
+
+**Nine local output files:** `outputs/explanatory/d9e/d9e_adjusted_years.csv`, `d9e_composition_associations.csv`, `d9e_point_estimates.csv`, `d9e_bootstrap_intervals.csv`, `d9e_bootstrap_replicates.csv`, `d9e_bootstrap_failures.csv`, `d9e_bootstrap_run.json`, `d9e_cluster_delta_intervals.csv` and `d9e_robustness.csv`. The complete numerical output (including all sensitivity cases) is retained in these machine-readable exports; a table below is the human-readable checkpoint, not a substitute for those files. All statements below concern **explanatory** outcomes, never predictive holdout scores.
+
+**Bootstrap run:** fixed RNG seed **`20261030`**; **2,000 attempted, 2,000 successful, zero failed** fits; 32 whole borough histories sampled with replacement, each contributing its complete seven-cohort trajectory; sampled profiles provide the equal-weight paired reference for each replicate. `d9e_bootstrap_failures.csv` contains zero rows (with expected columns). **22 estimands × 2,000 finite replicate estimates** are present. Success of the numerical refits does not establish all modelling or independence assumptions.
+
+## 24.7 Adjusted cohort-year rates and contrasts (D9e1)
+
+The estimates standardise E4 to the **224 observed borough/composition profiles with equal weights**, predicting each observed cohort year on that same profile set. Rates are **percent**; differences are **percentage points (pp)**. Percentile intervals use **whole-borough resampling**, not naive grouped-binomial standard errors. Displayed values are rounded to three decimals; calculations and exported values retain greater precision.
+
+| Cohort | Adjusted adverse rate (%) | Borough-bootstrap 95% percentile interval (%) |
+|---|---:|---:|
+| 2016/17 | 6.040 | [5.621, 6.469] |
+| 2017/18 | 6.031 | [5.615, 6.483] |
+| 2018/19 | 5.954 | [5.536, 6.418] |
+| 2019/20 | 5.461 | [5.081, 5.848] |
+| 2020/21 | 5.352 | [5.008, 5.675] |
+| 2021/22 | 5.927 | [5.481, 6.329] |
+| 2022/23 | 6.627 | [6.075, 7.126] |
+
+| Cohort contrast | Estimated change (pp) | Borough-bootstrap 95% percentile interval (pp) |
+|---|---:|---:|
+| 2017/18 vs 2016/17 | -0.010 | [-0.286, +0.298] |
+| 2017/18 vs previous cohort | -0.010 | [-0.286, +0.298] |
+| 2018/19 vs 2016/17 | -0.087 | [-0.364, +0.234] |
+| 2018/19 vs previous cohort | -0.077 | [-0.339, +0.195] |
+| 2019/20 vs 2016/17 | -0.579 | [-0.938, -0.199] |
+| 2019/20 vs previous cohort | -0.493 | [-0.787, -0.236] |
+| 2020/21 vs 2016/17 | -0.688 | [-1.036, -0.353] |
+| 2020/21 vs previous cohort | -0.109 | [-0.381, +0.128] |
+| 2021/22 vs 2016/17 | -0.114 | [-0.545, +0.283] |
+| 2021/22 vs previous cohort | +0.575 | [+0.296, +0.813] |
+| 2022/23 vs 2016/17 | +0.586 | [+0.094, +1.027] |
+| 2022/23 vs previous cohort | +0.700 | [+0.418, +0.998] |
+
+**Summary:** The adjusted rate reached **5.352% in 2020/21**, after **6.040% in 2016/17**, then increased to **6.627% in 2022/23**. The predeclared headline **2022/23 − 2016/17** estimate is **+0.586 pp**, 95% borough-bootstrap interval **[+0.094, +1.027] pp**; the most recent adjacent-year difference is **+0.700 pp** [**+0.418, +0.998**]. The intervals for several contrasts exclude zero under the borough-resampling procedure; these are **not multiplicity-adjusted claims** and do not identify causal cohort-year effects or uncertainty over future common-year shocks. There is no adjacent contrast for 2016/17.
+
+## 24.8 Composition associations and independent uncertainty cross-check (D9e2–D9e3)
+
+Each number is the **equal-profile mean of a paired change in E4 predicted probability** when one composition share increases by its frozen increment. Borough, observed year and other shares remain unchanged. These are **hypothetical model comparisons**, not physically reallocating students or estimating programme effects.
+
+| Frozen composition perturbation | Association (pp) | Bootstrap 95% interval (pp) | Clustered/delta 95% interval (pp) |
+|---|---:|---:|---:|
+| FSM-eligible share +2 pp | +0.030 | [-0.026, +0.137] | [-0.050, +0.109] |
+| Identified-SEN share +2 pp | -0.025 | [-0.159, +0.087] | [-0.164, +0.114] |
+| Standalone special-school share +0.25 pp (secondary) | -0.033 | [-0.111, +0.052] | [-0.124, +0.058] |
+
+All **three** bootstrap intervals and all **three** clustered/delta intervals include zero; the estimates are small, directionally uncertain and not individual-level associations. Changing one share while holding the other shares constant does not demonstrate that every resulting joint composition is common in the data. The standalone special-school perturbation remains a **secondary structural** sensitivity.
+
+The separate borough-clustered covariance/delta method uses a **finite-cluster correction** and evaluates the same 22 probability-scale quantities. The headline **2022/23 − 2016/17** clustered/delta interval is **[+0.121, +1.051] pp**, compared with the primary bootstrap **[+0.094, +1.027] pp**. Across the 12 reported year contrasts and three composition associations, both methods agree on whether their nominal 95% intervals straddle zero. For adjusted **rate levels**, the clustered/delta intervals are materially narrower than the borough-bootstrap intervals. Agreement on interval signs is not independent confirmation of coverage, model validity or future-year extrapolation. Rate-level interval widths differ partly because the bootstrap resamples the **reference-profile multiset**, while the clustered/delta calculation uses the original reference conditional on the fitted model; dependence assumptions also differ.
+
+## 24.9 Full frozen robustness set (D9e4)
+
+All six planned families were executed, totalling **43 alternative fits** (1 OLS + 1 disadvantage proxy + 32 borough deletions + 7 cohort deletions + 1 joint two-year exclusion + 1 trend) and **947** case/estimand rows: **907 comparable**, **38 not estimable**, **2 different-proxy** entries. These are sensitivity **point estimates**, not independently bootstrap-refitted intervals or formal hypothesis tests. Each group-deletion comparison uses the **same retained reference rows** for its full E4 and alternative-model evaluations; omit-year contrasts that require a missing category are labelled **not estimable**, never filled by extrapolation.
+
+| Robustness specification | Alternative 2022/23 − 2016/17 contrast (pp) |
+|---|---:|
+| Equal-weight adverse-rate OLS | +0.475 |
+| Approximate disadvantage replaces FSM | +0.991 |
+| Leave one borough out (32 refits) | +0.501 to +0.651 |
+| Leave one cohort out (seven refits) | +0.337 to +0.634 (five estimable) |
+| Remove 2019/20–2020/21 jointly | +0.537 |
+| Linear cohort-year log-odds trend | -0.331 |
+
+The original full-E4 endpoint estimate is **+0.586 pp**. The **32** borough-deletion alternatives remain positive, ranging **+0.501 to +0.651 pp**; omission of 2016/17 or 2022/23 makes the endpoint unidentifiable, leaving **five** estimable one-cohort-deletion alternatives (**+0.337 to +0.634 pp**). Joint exclusion of 2019/20–2020/21 yields **+0.537 pp**, still positive. Equal-weight OLS changes **both** the outcome model/link and observation weighting; it does not isolate a single assumption. The disadvantage-proxy model yields an alternative socioeconomic association of **+0.064 pp per +2 pp approximate disadvantage share**, **not** a directly interchangeable replacement for the FSM-specific effect.
+
+**Material limitation: the linear-trend alternative estimates −0.331 pp for the endpoint**, a sign reversal versus the categorical-year E4. It replaces six freely estimated cohort-year indicators with **one numerical 0–6 cohort trend on the log-odds scale**, while retaining borough FE and composition predictors. Thus the endpoint conclusion **depends on the allowed temporal pattern**; do **not** describe it as robust to all six checks, select the favourable temporal specification after inspecting results, or interpret the trend-constrained contrast as the same structural assumption. Other composition sensitivity results are also specification-sensitive (e.g. FSM +2 pp is **+0.119 pp** under the linear-trend alternative and can change sign in one-cohort deletions); their small original point estimates and wide intervals limit substantive claims.
+
+## 24.10 Output-level numerical QA, inference limits and checkpoint decision
+
+**Independent checks on the supplied exports:** (1) 2,000 unique numbered bootstrap attempts, 2,000 finite rows of all 22 estimands, and failure count zero; (2) recomputed 2.5th/97.5th replicate percentiles and sample SDs matching **all 22** exported bootstrap interval rows to floating-point tolerance; (3) the seven exported year rates and 12 reported differences agree with independently reconstructed point estimates; (4) the 22 clustered/delta point estimates equal the 22 primary point estimates; (5) all 43 robustness cases are present, with 947 statuses as reported; (6) the original year/composition estimate keys are complete, and no missing cohort-year contrast is represented by a fabricated prediction. These checks establish **export arithmetic/structure**, not an independent validation of upstream raw-data transformations or model fitting on the local machine.
+
+**Interpretation and limits:** The outcome is **not in a recorded sustained destination** (including activity not captured), **not a direct NEET rate**. Equal-weight standardized profile averages are **not** pupil-weighted London rates. Associations are borough/cohort-level and **not causal**, individual-pupil effects or forecasts. The 32 London boroughs form the observed borough system, not an independent random population sample; bootstrap intervals describe an assumed borough-resampling process conditional on model structure. Seven **common year regimes** cannot be made into thousands of independent time shocks by resampling boroughs. Shared shocks, nonlinear FE estimation, modest cluster counts, approximation of sandwich/delta inference, multiple reported contrasts and absent formal sensitivity intervals all restrict certainty. Differences in confidence-interval inclusion of zero do not constitute an adjusted multiple-testing decision.
+
+**Checkpoint decision:** D9e's predeclared explanatory estimands, uncertainty methods and six robustness families have been implemented and numerically reviewed at the **export level** with **no material internal inconsistency identified**. Preserve frozen E4 and the full sensitivity results, prominently retain the linear-trend sign reversal and modest uncertain composition effects, and proceed to the **separate predictive pre-final audit**. **Do not calculate, inspect or release the locked 2022/23 predictive final evaluation** without explicit subsequent approval. No additional adjusted borough-ranking estimand has been selected.
 
 ---
 
@@ -2606,4 +2686,4 @@ Proceed in the order:
 
 **problem understanding → raw-data understanding → population/outcome decisions → data-quality audit → EDA → modelling question → validation design → implementation → final audit**
 
-**D9c predictive development metrics and D9d explanatory E1–E4 fitting, numerical QA, fit comparisons and first-pass diagnostics are locally verified.** D9e probability-scale estimands/inference/robustness design in §24 is **accepted for implementation, with numerical results still pending**. Preserve frozen mean models and the locked 2022/23 predictive final evaluation until explicitly released after the separate pre-final audit.
+**D9c predictive development metrics and D9d explanatory E1–E4 fitting, numerical QA, fit comparisons and first-pass diagnostics are locally verified.** D9e probability-scale estimates, 2,000 successful borough-bootstrap draws, clustered-covariance cross-check and all six robustness families have now been produced and numerically audited from the supplied exports (§24.6–§24.10). Preserve frozen explanatory and predictive specifications; proceed to the **separate predictive pre-final audit**. The **2022/23 predictive final evaluation remains locked** until explicitly released.
