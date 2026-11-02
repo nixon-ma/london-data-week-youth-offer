@@ -2,7 +2,7 @@
 
 A reproducible data-science rebuild of a London Data Week 2026 hackathon project. It examines variation in Key Stage 4 (KS4) destinations across London boroughs and evaluates whether next-cohort adverse destination rates can be forecast from historical information.
 
-> **Project status:** D1–D9f pre-final work implemented. D9e explanatory inference and all six robustness families are complete and audited at export level; D9f local tests and historical-only preflight passed (user-reported). The 2022/23 **predictive** final evaluation remains locked pending separate explicit authorisation. This is not an operational council forecasting or intervention-allocation tool.
+> **Project status:** D1–D9g completed, including the authorised 2022/23 predictive final evaluation. D9e explanatory inference and robustness were audited at export level; D9f local tests and historical-only preflight passed (user-reported). B3 had the lowest final error across all three predeclared metrics. This is not an operational council forecasting or intervention-allocation tool.
 
 ## What are we measuring?
 
@@ -50,7 +50,7 @@ For a forecast of cohort `t+1`, the inputs must come from cohort `t` or earlier.
 
 Unlike E4, M1 does **not** include borough or cohort-year dummy variables or special-school share. This is a predeclared **parsimony choice given only seven cohorts**, **not evidence** that those factors are unimportant or cannot improve a future forecast. B3 separately represents historical borough structure. M1 also does **not** forecast next year's FSM or SEN shares; it predicts the next adverse rate directly from prior information.
 
-The 2018/19–2021/22 development target years were evaluated chronologically. B3 had lower mean development errors than M1, but the comparison does not isolate the incremental predictive value of FSM or SEN conditional on B3. The **2022/23 predictive evaluation remains locked** until explicitly authorised after pre-final checks. Using 2022/23 in explanatory fitting does **not** release that predictive boundary.
+The 2018/19–2021/22 development target years were evaluated chronologically; B3 had lower mean development MAE than M1. Following explicit release authorisation, the **2022/23 final predictive evaluation was completed** without retuning: B3 had the lowest MAE (0.878 pp), RMSE (1.087 pp) and target-cohort-weighted MAE (0.776 pp). M1 did not improve on B1 in primary MAE. This one final cohort is not evidence of stable future superiority, and B3 versus M1 does not identify the incremental effect of FSM/SEN conditional on B3; see `DATA_AUDIT.md` §28.
 
 Forecasting is a **retrospective benchmark on a harmonised published dataset**, not a demonstrated real-time historical forecasting system: publication delays and revisions would need separate point-in-time verification.
 

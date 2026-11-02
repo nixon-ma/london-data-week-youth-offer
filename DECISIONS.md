@@ -1113,3 +1113,15 @@ Proceed in the order:
 **Caveat:** The preflight can check numerical and temporal preparation, but cannot prove model superiority or operational historical forecast availability; the historical publication-vintage limitation and small number of annual regimes remain as accepted.
 
 **Post-push verification checkpoint:** Local preflight evidence as reported by the user confirms completion of the required historical-only checks; the earlier isolated-mirror evidence recorded in `DATA_AUDIT.md` remains separately labelled. No final-year predictive performance was released in this checkpoint. Preserve the frozen D8/D9a comparison and require an explicit release decision before invoking the scoring flag.
+
+---
+
+# D9g — Authorised 2022/23 final predictive evaluation (2 November 2026)
+
+**Status:** Completed; final-evaluation boundary explicitly released by the user after D9f local test/preflight verification. This D9g checkpoint supersedes D9f's historical *locked* status; it does not revise the previously accepted D8/D9a design or the D9e explanatory findings.
+
+**Frozen protocol followed:** Use the five historical borough transitions (160 rows; training targets through 2021/22) to fit M1; produce B1–B3 and M1 forecasts from 2021/22-or-earlier information; join to the single held-out 2022/23 borough target only upon release; report all four methods on the same 32 boroughs. No tuning, model replacement, feature revision, clipping or result-driven selection. The predeclared metrics are borough-unweighted MAE (primary), RMSE (secondary), and target-cohort-weighted MAE (sensitivity), all in percentage points, plus MAE minus B1.
+
+**Result:** B3 was lowest on all three metrics in the released 2022/23 cohort: MAE **0.877997 pp**, RMSE **1.086599 pp**, weighted MAE **0.775812 pp**. M1 MAE was **0.978946 pp**, above B1's **0.964386 pp**. B3's MAE improvement relative to B1 was **0.086389 pp**; M1's deterioration relative to B1 was **0.014560 pp**. Preserve the full four-method table and verification provenance in `DATA_AUDIT.md` §28, whether favourable or unfavourable.
+
+**Interpretation and closure:** D9g supports B3 as the best-performing *predeclared benchmark in this one final cohort*, consistent with the earlier development pattern, not as a proven winner in new years. There is only one final temporal regime, and repeated boroughs share shocks; do not attach unjustifiably narrow uncertainty intervals or infer causal/pupil-level effects. M1 and B3 use different history, so the comparison does **not** identify FSM/SEN's incremental predictive value conditional on B3. The source is harmonised/revised retrospective destination data, not a point-in-time operational forecasting system or a direct NEET measure. Do not retune on 2022/23. **Close the frozen modelling/evaluation phase; any new model is a separately labelled future experiment preserving this result.**

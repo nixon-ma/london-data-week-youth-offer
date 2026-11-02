@@ -2701,3 +2701,32 @@ Read-only inspection of commit `2123cbaa1272cf8d008935bb709558b0e7164fc2` confir
 **Verification boundary at initial proposal (superseded by the post-push update below):** New code compiled, and six synthetic tests passed in an isolated local *representative module mirror*, not against the actual checked-out GitHub repository. A historical-only preflight using the supplied raw ZIP and that mirror also passed: 160 training transitions, latest target 2021/22, 32 forecast origins, matrix rank four, finite M1 values and zero out-of-range forecasts. The patch has not yet been applied or run in the user's checked-out repository; therefore full GitHub-source integration, user-side raw-ZIP preflight and reproducibility are still **unverified**. No real 2022/23 predictive performance was constructed or inspected. User-side `git apply --check`, full test suite and historical-only preflight are required before readiness can be marked verified. Only subsequent, explicit authorisation can release the final scoring boundary.
 
 **Post-push D9f checkpoint (2 November 2026):** Read-only GitHub comparison confirms branch `d9-implementation` advanced exactly one commit to `0df00f19cc1b94248cf972de9f6c7bc592bcde45`, changing only `DECISIONS.md`, `DATA_AUDIT.md`, `src/run_final_predictive.py`, `src/youth_offer/final_gate.py` and `tests/test_final_gate.py`. The user reports that the full local test suite and historical-only default preflight both passed. The preflight design uses 160 earlier transitions and 32 unscored forecasts, checks matrix rank four, finite predictions and out-of-range forecasts, and does not score the 2022/23 target. This user-reported local verification supersedes the preceding proposal-stage pending status; it is not an independent CI execution or final-year accuracy result. **The 2022/23 predictive final evaluation remains locked pending separate explicit authorisation.**
+
+---
+
+# 28. D9g — Released 2022/23 predictive evaluation and final verification
+
+## 28.1 Release and protocol
+
+After the D9f historical-only preflight and tests, the user expressly authorised opening the locked **2022/23 predictive** boundary. The published `src/run_final_predictive.py --release-202223-predictive-evaluation` path uses the same four frozen forecasting methods on a matched set of **32** boroughs; M1 learns from **160** earlier transition rows with no final-target information in training. B1–B3 use 2021/22-or-earlier information. The 2022/23 observed rates and denominators enter only the released matching/scoring step. No new features, tuning, estimator changes, method selection, or clipping followed the final results. This releases the predictive evaluation only; D9e's explanatory 2022/23 analysis is separate.
+
+## 28.2 Final metrics
+
+All errors are in **percentage points (pp)**; smaller is better. Target-cohort counts are used *only* as ex-post weights in weighted MAE. `MAE − B1` is negative when the method improves on borough persistence.
+
+| Method | MAE, primary (pp) | RMSE (pp) | Weighted MAE (pp) | MAE − B1 (pp) |
+|---|---:|---:|---:|---:|
+| B1 — Borough persistence | 0.964386 | 1.277373 | 0.808698 | 0.000000 |
+| B2 — London persistence | 1.306742 | 1.598637 | 1.168684 | +0.342356 |
+| B3 — London + expanding borough offset | **0.877997** | **1.086599** | **0.775812** | **−0.086389** |
+| M1 — Frozen median/LAD regression | 0.978946 | 1.234650 | 0.824836 | +0.014560 |
+
+B3 has the lowest error under all three predeclared metrics. Its absolute error is smaller than M1's for **18/32** boroughs (M1 smaller in 14/32); this paired count is descriptive, not an independent statistical superiority test. M1 has slightly lower RMSE than B1 despite slightly higher MAE, consistent with differences in the size/distribution of errors; it does **not**, by itself, establish the number of large errors.
+
+## 28.3 Reproduction, evidence boundary and interpretation
+
+The authorised release was initially run in a locally reconstructed D9f module mirror against the supplied raw ZIP, producing `outputs/predictive_final_gate/released_predictions_and_targets.csv` and `released_annual_metrics.csv`. An independent raw-table reconstruction and separate statsmodels median-regression refit agreed on B1–B3 numerically and on M1 scores within approximately **0.0003 pp**. The user subsequently ran the release in their actual checked-out repository and confirmed that **all four metric rows match the reported table**. This is user-confirmed local reproduction and an independent reconstruction check; it is **not** an independently witnessed CI run on their checkout. No GitHub mutation or public results release is implied by this documentation.
+
+Only **one final target cohort** is evaluated, following four development target years; there is no basis for broad predictive-superiority or significance claims from 32 correlated boroughs in one annual regime. B3 and M1 do not share identical feature histories, so M1's comparison to B3 does not isolate the contribution of FSM or Identified SEN conditional on B3. All estimates concern **not in a recorded sustained destination**, including activity not captured, not direct NEET status. Publication lags and revisions make this a *retrospective chronological benchmark*, not an operational historically executable forecast. No 2022/23-driven redesign is authorised within D9g.
+
+**Checkpoint:** The D9g final predictive evaluation is completed and numerically reproduced; retain all four frozen results and close this modelling/evaluation phase. Future changes must be separately labelled, leaving the one-time final results intact.
