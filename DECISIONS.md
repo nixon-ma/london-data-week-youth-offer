@@ -1094,3 +1094,20 @@ Proceed in the order:
 **problem understanding → raw-data understanding → population/outcome decisions → data-quality audit → EDA → modelling question → validation design → implementation → final audit**
 
 **D9c development and D9d explanatory fitting/first-pass diagnostics remain locally verified; D9e explanatory estimation, 2,000-attempt inference and all six robustness families have now been implemented, and their supplied outputs numerically audited.** Preserve the frozen explanatory specification and proceed to the **separate predictive pre-final audit**. Do not calculate, inspect or release 2022/23 predictive final performance without explicit approval.
+
+---
+
+# D9f — Predictive pre-final execution gate (implementation proposal, 2 November 2026)
+
+**Status:** Proposed local patch; user-side application, full-repository tests and historical-only preflight are **pending**. No 2022/23 predictive final performance has been calculated or inspected.
+
+**Scope:** This is an **engineering release safeguard**, not a change to the accepted D8/D9a predictive estimand, features, B1–B3, M1, no-tuning rule, metrics, validation years or interpretation restrictions. D9c development results and D9e explanatory findings remain unchanged.
+
+**Release design:** A separate `src/run_final_predictive.py` entry point operates in two deliberately distinct modes:
+
+1. **Default (locked):** Retain only raw cohorts 2016/17–2021/22 **before** constructing the outcome table; construct the five previously permitted one-cohort transition targets (160 rows), all 32 origin-2021/22 predictor rows, historical B1–B3 forecasts and an unscored M1 forecast. Run historical source/feature/alignment/baseline/model QA. Write only `outputs/predictive_final_gate/historical_preflight.json`: counts, full design-matrix rank, finite values, and out-of-range forecast counts. No 2022/23 target is constructed, joined, scored or exported.
+2. **Explicitly authorised release only:** The CLI flag `--release-202223-predictive-evaluation` allows a separately named function to construct the 2022/23 headline target, verify all 32 keys and exact accounting, join it to **unchanged** historical-origin forecasts, and calculate exactly the predeclared MAE, RMSE, weighted-MAE and B1-relative difference for B1–B3/M1. This path is never invoked by default or by the historical-only development pipeline. Its results must be reported regardless of whether M1 wins.
+
+**Required verification before releasing:** Apply the patch locally with `git apply --check`; run all tests, including `tests/test_final_gate.py`; run only `python src/run_final_predictive.py` without the release flag; confirm 160 training transitions, 32 forecast boroughs, rank four, all fitted values finite, zero materially invalid probabilities and **no scored final files**. If any hard diagnostic fails, keep the holdout locked and investigate the objective failure. After reviewing that evidence, require a separate explicit user decision to release the final evaluation. Do not use final observed outcomes to alter model choices or engineering rules.
+
+**Caveat:** The preflight can check numerical and temporal preparation, but cannot prove model superiority or operational historical forecast availability; the historical publication-vintage limitation and small number of annual regimes remain as accepted.
