@@ -1097,9 +1097,9 @@ Proceed in the order:
 
 ---
 
-# D9f — Predictive pre-final execution gate (implementation proposal, 2 November 2026)
+# D9f — Predictive pre-final execution gate (implemented and locally verified, 2 November 2026)
 
-**Status:** Proposed local patch; user-side application, full-repository tests and historical-only preflight are **pending**. No 2022/23 predictive final performance has been calculated or inspected.
+**Status:** Published on `d9-implementation` in commit `0df00f19cc1b94248cf972de9f6c7bc592bcde45`. User reports the full local test suite and default historical-only preflight passed. Read-only GitHub review confirms the five intended changed files; the final evaluation remains **locked** pending separate explicit authorisation.
 
 **Scope:** This is an **engineering release safeguard**, not a change to the accepted D8/D9a predictive estimand, features, B1–B3, M1, no-tuning rule, metrics, validation years or interpretation restrictions. D9c development results and D9e explanatory findings remain unchanged.
 
@@ -1111,3 +1111,5 @@ Proceed in the order:
 **Required verification before releasing:** Apply the patch locally with `git apply --check`; run all tests, including `tests/test_final_gate.py`; run only `python src/run_final_predictive.py` without the release flag; confirm 160 training transitions, 32 forecast boroughs, rank four, all fitted values finite, zero materially invalid probabilities and **no scored final files**. If any hard diagnostic fails, keep the holdout locked and investigate the objective failure. After reviewing that evidence, require a separate explicit user decision to release the final evaluation. Do not use final observed outcomes to alter model choices or engineering rules.
 
 **Caveat:** The preflight can check numerical and temporal preparation, but cannot prove model superiority or operational historical forecast availability; the historical publication-vintage limitation and small number of annual regimes remain as accepted.
+
+**Post-push verification checkpoint:** Local preflight evidence as reported by the user confirms completion of the required historical-only checks; the earlier isolated-mirror evidence recorded in `DATA_AUDIT.md` remains separately labelled. No final-year predictive performance was released in this checkpoint. Preserve the frozen D8/D9a comparison and require an explicit release decision before invoking the scoring flag.

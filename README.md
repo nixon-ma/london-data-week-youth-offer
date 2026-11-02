@@ -2,7 +2,7 @@
 
 A reproducible data-science rebuild of a London Data Week 2026 hackathon project. It examines variation in Key Stage 4 (KS4) destinations across London boroughs and evaluates whether next-cohort adverse destination rates can be forecast from historical information.
 
-> **Project status:** D1–D9c completed; D9d explanatory-model fitting, fit comparisons and first-pass residual/influence diagnostics locally verified. Explanatory inference and predeclared robustness remain **pending**. The 2022/23 **predictive** evaluation remains locked. This is an analysis in development, not an operational council forecasting or intervention-allocation tool.
+> **Project status:** D1–D9f pre-final work implemented. D9e explanatory inference and all six robustness families are complete and audited at export level; D9f local tests and historical-only preflight passed (user-reported). The 2022/23 **predictive** final evaluation remains locked pending separate explicit authorisation. This is not an operational council forecasting or intervention-allocation tool.
 
 ## What are we measuring?
 
@@ -37,7 +37,7 @@ The special-school share is a **structural population-composition adjustment**, 
 
 Initial explanatory results show substantially improved in-sample fit from borough and cohort-year effects; E4's composition block adds little further deviance reduction after those effects. E4's in-sample MAE/RMSE are approximately **0.447/0.564 percentage points**, with Pearson dispersion approximately **1.60**. These are **fit diagnostics, not inference-qualified effects or forecasts**; see [DATA_AUDIT.md §23.5](DATA_AUDIT.md#235-subsequent-d9d-fit-comparison-residual-and-influence-diagnostics--locally-verified).
 
-Substantive explanatory conclusions still require uncertainty and predeclared robustness checks. Good in-sample fit alone does not establish a meaningful association, a causal effect or future predictive accuracy.
+D9e completed 2,000 successful borough-bootstrap refits and six predeclared robustness families, checked numerically at the export level. The adjusted 2022/23–2016/17 contrast is +0.586 pp in E4 but reverses under a linear-trend alternative (−0.331 pp). These are historical associations, not causal effects or predictions; see [DATA_AUDIT.md §24](DATA_AUDIT.md).
 
 ### Predictive models: B1–B3 and M1
 
