@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="791.634812pt" height="709.365547pt" viewBox="0 0 791.634812 709.365547" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>London Data Week Youth Offer rebuild</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 709.365547
+L 791.634812 709.365547
+L 791.634812 0
+L 0 0
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 122.481688 634.577812
+L 708.290287 634.577812
+L 708.290287 35.837812
+L 122.481688 35.837812
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g clip-path="url(#p8a3026716e)">
+    <image xlink:href="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAAy4AAANACAYAAADNTTmBAAAW7UlEQVR4nO3Zy46l112HYe/ur/rkPjh2226fEzASKEpggEBIHAYIJAQXwZg7Y8IkAxTJIBACFDJIYiMSmyRyfGifYnfZ3eWu7qraxR0wWtJ6tfQ8V/DTf2vvqvf7dn/37/90/gTL+O1bp7MnMNinxxfcdCHf+cbJ7AkMdPvK3j0X8v0PrsyewGDPXDlz04X4jwgAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMjbfvfpk9kbGOh/v9rcczHXt/3sCQz01r0D91zI7cu+nyt55srZ7AnA/8MbFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIG974+7V2RsY6IWrp+65mNOLu9kTGOjO1TP3XMib9y7NnsBA17e9ey7mp1/6jq7EGxcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBv+7M7D2dvYKCj0517Qtjf//zJ2RMY6OWbZ+65kG13PnsCg31x30lX4o0LAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQt33/w2uzNzDQzYO9ey7m6uYzXckf3nk0ewIDHT72/G8lb391afYEBtvtnHQlfnEBAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIC87fhsN3sDA/30l865mu+8fnH2BAa698jnuZJPjzz/W8mDo/PZExjs+NhnuhK/uAAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQN727ntnszcw0LVrO/dczOFjzxdWsvmKLuX+g/PZExjoyhVf0NU8euQ7uhL/EQEAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnb8b2T2RsY6NVXr7jnYr788nz2BAa6dWvnngu5csXnuZIr/oQu5+5bD2dPYCBvXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgLzt+nOXZm9goM8+27vnYu4/OJ89gYFeu71zz4V8+4XT2RMY6Hs/vuieq9k8o1+JTxMAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMjbrj+5m72BgY6Pz91zMadHZ7MnMNDp+eaeC7n32PO/lTx72+e5mk/efTR7AgP5hgIAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnbvXv72RsY6JVXL7rnYu7f95mu5LMHnhet5DPP/5bym8+ezZ7AYJ+46FL8BQUAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPK2R4cnszcw0Lt751zN5cu72RMY6Na1c/dcyNFj38+VvPflxdkTGGz/zFU3XYg3LgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQN729MuXZ29goP3ZuXsu5qmnPF9YyeHR7AWMtNu550ref+fR7AkMtrv/2E0X4j8iAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgb/vycD97AwPtfvSpey7m7I+fnz2BgW7e9LxoJdevzl7ASC9865KDLubw8GD2BAbyFxQAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMjbzo5OZ29goOf/4o57Lubrh+ezJzDQRz84dM+FHH375uwJDHR65pyr2Q5mL2Akb1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIC87aXXL8/ewEAff3Tmnou5fn03ewIDXX79pnsu5DdenL2AkX70r0cOupiD/7o7ewIDeeMCAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkbR/+/NHsDQy0Ozt3z8V89dXsBYx04eaBgy7ko3ue/63kznevz57AYB9vL7vpQvziAgAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAedvtVy7N3sBAv37/sXsu5snbB7MnMND+zDlXst/PXsBIn/3kKwddzIVjP7or8cYFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADI235993T2BgbanezdczHbxdkLGOnR6bmDLuTw0Oe5kquv35g9gcG+fv+hmy7EGxcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBv2z08mb2Bgc5vXHLPxVzweGEpB5d2sycw0MGBz3Mlhz8+nD2B0a4duOlC/EsEAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkbZefuzx7AwNd3HbuuZj7b3w0ewID/cHf3nHPhXzy0PO/lXzx8o3ZExjs8j+846YL8YsLAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkbcfHsycw0osv7Rx0MZ/cuDR7AgP95388ds+FPP2tK7MnMNLJ3j0Xc/InL8+ewEDeuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnb1au72RsY6O57p+65mNf/+tnZExjo3XfP3HMhpyfnsycw0IWPH7jnYrb/+Xz2BAbyxgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMjbTv/t7uwNDHTh1ZvuuZhf/vOD2RMY6E//5oZ7LuTNDzz/W8nv/9VTsycw2E9++LGbLsQvLgAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkLftr1+avYGB9k9dcc/V7HazFzDQr+5v7rmQwzcPZ09goP9+eNM9F7N/zWe6Em9cAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAvO3Fv3xu9gYGev/tY/dczPazz2dPYKBf3bvhngvZ33ly9gQGOv7ZoXsuZv9d/+euxBsXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgb/voHz+evYGBLjx91T0Xs799bfYEBnrqd26450K+PtrPnsBAj1675Z6Lufj2F7MnMJA3LgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQN62OzqZvYGBdpcuuudizq8dzJ7AQBc8LlrK8dF+9gQG2t75wj0Xc37V39CV+BMKAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkbU+cz57ASBe+OHbQxZwfncyewED3frh3z4Vsh35zV7Lze7ucC/cOZ09gIG9cAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAvO2J8/PZGxjowgf33XMx+9tXZ09goLPXbrnnQs5fuTF7AgNd+pf33HM1nz+YvYCBvHEBAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADytgsfPpi9gYFO/ugl91zM9sYvZk9goIOzc/dcyOM//+bsCQx08nvPu+diTn/hb+hKvHEBAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADytrNv3pq9gYG2tz5zz8XstoPZExjo5Le+4Z4reXgyewEDHfzgrnsu5tKNO7MnMJA3LgAAQJ5wAQAA8oQLAACQJ1wAAIA84QIAAOQJFwAAIE+4AAAAecIFAADIEy4AAECecAEAAPKECwAAkCdcAACAPOECAADkCRcAACBPuAAAAHnCBQAAyBMuAABAnnABAADyhAsAAJAnXAAAgDzhAgAA5AkXAAAgT7gAAAB5wgUAAMgTLgAAwBN1/wdmrE47g5WXzQAAAABJRU5ErkJggg==" id="image504f18f275" transform="scale(1 -1) translate(0 -599.04)" x="122.481688" y="-35.537812" width="586.08" height="599.04"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1"/>
+     <g id="text_1">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #667588" x="164.325159" y="645.67625" transform="rotate(-0 164.325159 645.67625)">2016/17</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2"/>
+     <g id="text_2">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #667588" x="248.012102" y="645.67625" transform="rotate(-0 248.012102 645.67625)">2017/18</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3"/>
+     <g id="text_3">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #667588" x="331.699045" y="645.67625" transform="rotate(-0 331.699045 645.67625)">2018/19</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4"/>
+     <g id="text_4">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #667588" x="415.385987" y="645.67625" transform="rotate(-0 415.385987 645.67625)">2019/20</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_5"/>
+     <g id="text_5">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #667588" x="499.07293" y="645.67625" transform="rotate(-0 499.07293 645.67625)">2020/21</text>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_6"/>
+     <g id="text_6">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #667588" x="582.759873" y="645.67625" transform="rotate(-0 582.759873 645.67625)">2021/22</text>
+     </g>
+    </g>
+    <g id="xtick_7">
+     <g id="line2d_7"/>
+     <g id="text_7">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #667588" x="666.446816" y="645.67625" transform="rotate(-0 666.446816 645.67625)">2022/23</text>
+     </g>
+    </g>
+    <g id="text_8">
+     <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #19283e" x="415.385987" y="659.354375" transform="rotate(-0 415.385987 659.354375)">KS4 cohort</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_8"/>
+     <g id="text_9">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="48.384469" transform="rotate(-0 118.981688 48.384469)">Lambeth</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_9"/>
+     <g id="text_10">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="67.095094" transform="rotate(-0 118.981688 67.095094)">Islington</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_10"/>
+     <g id="text_11">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="85.805719" transform="rotate(-0 118.981688 85.805719)">Greenwich</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_11"/>
+     <g id="text_12">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="104.516344" transform="rotate(-0 118.981688 104.516344)">Haringey</text>
+     </g>
+    </g>
+    <g id="ytick_5">
+     <g id="line2d_12"/>
+     <g id="text_13">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="123.226969" transform="rotate(-0 118.981688 123.226969)">Lewisham</text>
+     </g>
+    </g>
+    <g id="ytick_6">
+     <g id="line2d_13"/>
+     <g id="text_14">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="141.937594" transform="rotate(-0 118.981688 141.937594)">Newham</text>
+     </g>
+    </g>
+    <g id="ytick_7">
+     <g id="line2d_14"/>
+     <g id="text_15">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="160.648219" transform="rotate(-0 118.981688 160.648219)">Enfield</text>
+     </g>
+    </g>
+    <g id="ytick_8">
+     <g id="line2d_15"/>
+     <g id="text_16">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="179.358844" transform="rotate(-0 118.981688 179.358844)">Hammersmith and Fulham</text>
+     </g>
+    </g>
+    <g id="ytick_9">
+     <g id="line2d_16"/>
+     <g id="text_17">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="198.069469" transform="rotate(-0 118.981688 198.069469)">Camden</text>
+     </g>
+    </g>
+    <g id="ytick_10">
+     <g id="line2d_17"/>
+     <g id="text_18">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="216.780094" transform="rotate(-0 118.981688 216.780094)">Havering</text>
+     </g>
+    </g>
+    <g id="ytick_11">
+     <g id="line2d_18"/>
+     <g id="text_19">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="235.490719" transform="rotate(-0 118.981688 235.490719)">Barking and Dagenham</text>
+     </g>
+    </g>
+    <g id="ytick_12">
+     <g id="line2d_19"/>
+     <g id="text_20">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="254.201344" transform="rotate(-0 118.981688 254.201344)">Kensington and Chelsea</text>
+     </g>
+    </g>
+    <g id="ytick_13">
+     <g id="line2d_20"/>
+     <g id="text_21">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="272.911969" transform="rotate(-0 118.981688 272.911969)">Croydon</text>
+     </g>
+    </g>
+    <g id="ytick_14">
+     <g id="line2d_21"/>
+     <g id="text_22">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="291.622594" transform="rotate(-0 118.981688 291.622594)">Hillingdon</text>
+     </g>
+    </g>
+    <g id="ytick_15">
+     <g id="line2d_22"/>
+     <g id="text_23">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="310.333219" transform="rotate(-0 118.981688 310.333219)">Waltham Forest</text>
+     </g>
+    </g>
+    <g id="ytick_16">
+     <g id="line2d_23"/>
+     <g id="text_24">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="329.043844" transform="rotate(-0 118.981688 329.043844)">Richmond upon Thames</text>
+     </g>
+    </g>
+    <g id="ytick_17">
+     <g id="line2d_24"/>
+     <g id="text_25">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="347.754469" transform="rotate(-0 118.981688 347.754469)">Hackney</text>
+     </g>
+    </g>
+    <g id="ytick_18">
+     <g id="line2d_25"/>
+     <g id="text_26">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="366.465094" transform="rotate(-0 118.981688 366.465094)">Tower Hamlets</text>
+     </g>
+    </g>
+    <g id="ytick_19">
+     <g id="line2d_26"/>
+     <g id="text_27">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="385.175719" transform="rotate(-0 118.981688 385.175719)">Southwark</text>
+     </g>
+    </g>
+    <g id="ytick_20">
+     <g id="line2d_27"/>
+     <g id="text_28">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="403.886344" transform="rotate(-0 118.981688 403.886344)">Bexley</text>
+     </g>
+    </g>
+    <g id="ytick_21">
+     <g id="line2d_28"/>
+     <g id="text_29">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="422.596969" transform="rotate(-0 118.981688 422.596969)">Westminster</text>
+     </g>
+    </g>
+    <g id="ytick_22">
+     <g id="line2d_29"/>
+     <g id="text_30">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="441.307594" transform="rotate(-0 118.981688 441.307594)">Merton</text>
+     </g>
+    </g>
+    <g id="ytick_23">
+     <g id="line2d_30"/>
+     <g id="text_31">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="460.018219" transform="rotate(-0 118.981688 460.018219)">Wandsworth</text>
+     </g>
+    </g>
+    <g id="ytick_24">
+     <g id="line2d_31"/>
+     <g id="text_32">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="478.728844" transform="rotate(-0 118.981688 478.728844)">Brent</text>
+     </g>
+    </g>
+    <g id="ytick_25">
+     <g id="line2d_32"/>
+     <g id="text_33">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="497.439469" transform="rotate(-0 118.981688 497.439469)">Hounslow</text>
+     </g>
+    </g>
+    <g id="ytick_26">
+     <g id="line2d_33"/>
+     <g id="text_34">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="516.150094" transform="rotate(-0 118.981688 516.150094)">Bromley</text>
+     </g>
+    </g>
+    <g id="ytick_27">
+     <g id="line2d_34"/>
+     <g id="text_35">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="534.860719" transform="rotate(-0 118.981688 534.860719)">Ealing</text>
+     </g>
+    </g>
+    <g id="ytick_28">
+     <g id="line2d_35"/>
+     <g id="text_36">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="553.571344" transform="rotate(-0 118.981688 553.571344)">Barnet</text>
+     </g>
+    </g>
+    <g id="ytick_29">
+     <g id="line2d_36"/>
+     <g id="text_37">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="572.281969" transform="rotate(-0 118.981688 572.281969)">Harrow</text>
+     </g>
+    </g>
+    <g id="ytick_30">
+     <g id="line2d_37"/>
+     <g id="text_38">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="590.992594" transform="rotate(-0 118.981688 590.992594)">Redbridge</text>
+     </g>
+    </g>
+    <g id="ytick_31">
+     <g id="line2d_38"/>
+     <g id="text_39">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="609.703219" transform="rotate(-0 118.981688 609.703219)">Kingston upon Thames</text>
+     </g>
+    </g>
+    <g id="ytick_32">
+     <g id="line2d_39"/>
+     <g id="text_40">
+      <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #667588" x="118.981688" y="628.413844" transform="rotate(-0 118.981688 628.413844)">Sutton</text>
+     </g>
+    </g>
+   </g>
+   <g id="text_41">
+    <text style="font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #19283e" x="122.481688" y="17.837812" transform="rotate(-0 122.481688 17.837812)">Borough gaps persist, but most boroughs worsened in 2022/23</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_3">
+    <path d="M 730.289537 542.629312
+L 751.031687 542.629312
+L 751.031687 127.786312
+L 730.289537 127.786312
+z
+" style="fill: #ffffff"/>
+   </g>
+   <image xlink:href="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAAB0AAAJACAYAAABxHG0PAAAD1ElEQVR4nO2d0bEcOQwDsSjkn98F49FF4E8SV9fsAKaLIxKSZl3Pv/f+eVrGKpCn9ULVqVT6BFnTB1lTN6QRZmQeplJdOAziyYf/jRuZUUKKwW9d6nWjSGvqhjSYg1kwjZQLh0k8+vS/cOEwSu5aMYlVIJg1dUMa0H76KJUKc614lO51QxrM6w0pBr91qdeNIq2pG9JcOExiFQgnHN6FwyDBZG8Ktwp1Kv0KUpfCYR8XnLqRGSWYRsp7v3Wp140irakb0nyY/fQVpC44BTojvYLUBaeukUYJ6LD99qXeV+rCYZbcEXQSq0DuNDiJRZEGczDL7aeTWAWCiUE3pLlwmMQqENKa/talXjfqfvYaJndymMQqEMyauiEN5zPdR2mkkCr9rUu9blTr9f4BNZLW8b5SrMD/rUu9btSFwzABhcPbl3pfKVClbkjzh5K9wTRSQJVqHxecunAYJaCReftS7ysFqtQNaUjfHH7rUq8bRRqZ/ClIXXDqGmmUXDhMYhUIZmtzQxrOLvOBKv2tS71u1J0chglpZLSO95UihcNXkLrg1I3MKMH8U9uAYlD7uODUNdIouf10EqtAMDHohjSY15sLh0msAsF0rxvSgEbm7Uu9rxTosB3MmrohDSgctI8LTnFGJpjvSG5Iw2mkryB1wSnSmr4LhzlyIzOJVSCYkQkmBt2QBvN6g/nDILlKJ/Ho0//C/Q+SowQ0Mt++1PtKgdbUDWnu5DCJVSCYkQmmUjekeYV08LpRpEYKp9KPUqkb0nAa6V2lg1gFgrlAuSHNK8yM1426cBjGKpA7OUwS0H767Uu9rxRqTd++1PtK3clhlmAaKZxKP0rguyGNMI0kzKdXYa6KP8qauiHNhcMkVoFcDE7i0af/xxpJlF3mQXaZgMLhg1TqhjScI6gwMSjQmr51qdeNulvbMLkL1CRWgWBi0A1pMNkbzsnhRxmZYLrXDWkw2RtOOIgyMsF0rxvScBrpdz/aDmIVCKZ73ZAGdBN/kEYKZmSC6V43pOGMzO9GZhCrQDDd64Y0oJv4gzRSSJVqHe8rdUfQWXIjM4lVIJgLlBvSgH72evtS7ysFGplg1tQNaUD76Yep9O1Lva8UqHvdkOZGZhKrQECnwW9f6n2lLntnCWaXCWZkgllTN6R5hT+Q5E6lwlT6ICMTTPe6IY0orzekcPjWpV43ilSpG9LcyExiFcidHCbx6NP/woXDKMHsMuFUKspp0A1pOI30rtL/4db21qVeN+pGZphcOExiFQjmUuyG9EZmFKtAMIftYL6uuCHN7aeTWAWC2U+D6V43pP8CwB3mCdx7UhEAAAAASUVORK5CYII=" id="imagef17d8f9c14" transform="scale(1 -1) translate(0 -414.72)" x="730.08" y="-127.44" width="20.88" height="414.72"/>
+   <g id="matplotlib.axis_3"/>
+   <g id="matplotlib.axis_4">
+    <g id="ytick_33">
+     <g id="line2d_40">
+      <defs>
+       <path id="m76c0a468c3" d="M 0 0
+L 3.5 0
+" style="stroke: #667588; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m76c0a468c3" x="751.031687" y="542.629312" style="fill: #667588; stroke: #667588; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_42">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #667588" x="758.031687" y="546.428531" transform="rotate(-0 758.031687 546.428531)">0</text>
+     </g>
+    </g>
+    <g id="ytick_34">
+     <g id="line2d_41">
+      <g>
+       <use xlink:href="#m76c0a468c3" x="751.031687" y="459.660712" style="fill: #667588; stroke: #667588; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_43">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #667588" x="758.031687" y="463.459931" transform="rotate(-0 758.031687 463.459931)">2</text>
+     </g>
+    </g>
+    <g id="ytick_35">
+     <g id="line2d_42">
+      <g>
+       <use xlink:href="#m76c0a468c3" x="751.031687" y="376.692112" style="fill: #667588; stroke: #667588; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_44">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #667588" x="758.031687" y="380.491331" transform="rotate(-0 758.031687 380.491331)">4</text>
+     </g>
+    </g>
+    <g id="ytick_36">
+     <g id="line2d_43">
+      <g>
+       <use xlink:href="#m76c0a468c3" x="751.031687" y="293.723512" style="fill: #667588; stroke: #667588; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_45">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #667588" x="758.031687" y="297.522731" transform="rotate(-0 758.031687 297.522731)">6</text>
+     </g>
+    </g>
+    <g id="ytick_37">
+     <g id="line2d_44">
+      <g>
+       <use xlink:href="#m76c0a468c3" x="751.031687" y="210.754912" style="fill: #667588; stroke: #667588; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_46">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #667588" x="758.031687" y="214.554131" transform="rotate(-0 758.031687 214.554131)">8</text>
+     </g>
+    </g>
+    <g id="ytick_38">
+     <g id="line2d_45">
+      <g>
+       <use xlink:href="#m76c0a468c3" x="751.031687" y="127.786312" style="fill: #667588; stroke: #667588; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_47">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #667588" x="758.031687" y="131.585531" transform="rotate(-0 758.031687 131.585531)">10</text>
+     </g>
+    </g>
+    <g id="text_48">
+     <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #19283e" x="782.355125" y="335.207812" transform="rotate(-90 782.355125 335.207812)">Outside recorded sustained destinations (% of cohort)</text>
+    </g>
+   </g>
+   <g id="LineCollection_1"/>
+   <g id="patch_4">
+    <path d="M 730.289537 542.629312
+L 740.660612 542.629312
+L 751.031687 542.629312
+L 751.031687 127.786312
+L 740.660612 127.786312
+L 730.289537 127.786312
+L 730.289537 542.629312
+z
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+  </g>
+  <g id="text_49">
+   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #667588" x="116.281687" y="687.437812" transform="rotate(-0 116.281687 687.437812)">Rows sorted by mean adverse rate across all seven cohorts  |  27/32 boroughs increased in 2022/23  |  2016/17–2022/23 rank correlation 0.68</text>
+  </g>
+  <g id="text_50">
+   <text style="font-size: 8.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #667588" x="116.281687" y="700.397812" transform="rotate(-0 116.281687 700.397812)">School/institution LA, not pupils' residence; descriptive rates, not NEET or council performance.</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p8a3026716e">
+   <rect x="122.481688" y="35.837812" width="585.8086" height="598.74"/>
+  </clipPath>
+ </defs>
+</svg>

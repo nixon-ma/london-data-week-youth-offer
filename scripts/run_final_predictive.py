@@ -5,16 +5,21 @@ Only an explicitly supplied --release-202223-predictive-evaluation flag
 constructs the final targets, calculates metrics or exports scored results.
 
 Examples from repository root:
-  python src/run_final_predictive.py
+  python scripts/run_final_predictive.py
   # ONLY AFTER EXPLICIT USER AUTHORISATION:
-  python src/run_final_predictive.py --release-202223-predictive-evaluation
+  python scripts/run_final_predictive.py --release-202223-predictive-evaluation
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
+
+# Resolve the reusable package after moving this entry point out of src/.
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
 
 from youth_offer import data
 from youth_offer.final_gate import (

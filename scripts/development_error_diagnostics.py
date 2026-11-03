@@ -1,6 +1,6 @@
 """Reproduce descriptive M1-versus-B3 development diagnostics.
 
-Run from the repository root after `python src/run_pipeline.py`:
+Run from the repository root after `python scripts/run_pipeline.py`:
     python scripts/development_error_diagnostics.py
 
 Only the four unlocked development target years are examined.
