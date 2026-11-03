@@ -6,7 +6,7 @@ constructs the final targets, calculates metrics or exports scored results.
 
 Examples from repository root:
   python scripts/run_final_predictive.py
-  # ONLY AFTER EXPLICIT USER AUTHORISATION:
+  # Reproduce the separately authorised final evaluation:
   python scripts/run_final_predictive.py --release-202223-predictive-evaluation
 """
 
@@ -53,8 +53,7 @@ def run(*, raw_zip: Path, release_final: bool = False) -> dict:
         print("Final 2022/23 predictive evaluation remains LOCKED; no final targets were scored.")
         return report
 
-    # Explicit user release only: this is the FIRST point where 2022/23
-    # target rows enter any outcome-construction or scoring function.
+    # Only this release branch constructs or scores the 2022/23 targets.
     released_raw = london_la.loc[
         london_la["time_period"].eq(LOCKED_TARGET_YEAR)
     ].copy()

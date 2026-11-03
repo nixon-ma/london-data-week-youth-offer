@@ -1307,9 +1307,9 @@ The following formulations are not supported as primary modelling questions:
 
 ---
 
-## 16.8 Career / project-design implication
+## 16.8 Analytical design implications
 
-The strongest methodological story is not to force complex ML onto a small aggregate panel. The project instead demonstrates:
+The small aggregate panel does not justify complex ML on its own. The analytical design therefore prioritises:
 
 1. rigorous raw-data and disclosure auditing;
 2. explicit outcome and population definition;
@@ -2414,7 +2414,7 @@ B3 has lower annual MAE than M1 in all four years but smaller error in only 69/1
 - B3 and M1 use different historical information sets. Their comparison does not identify the incremental contribution of FSM or SEN conditional on B3. The benchmark is retrospective on the harmonised published series; data-release timing does not support claims about real-time operational forecasts.
 - The 2022/23 predictive evaluation remains locked. It was **not** constructed, scored or inspected during D9c. Presence of the cohort in separate explanatory/EDA tables does not release the predictive lock.
 
-**Reproduction:** From the repository root, run `python -m unittest discover -s tests -p 'test_development_evaluation.py' -v` for self-contained synthetic QA, followed by `python src/run_pipeline.py` to regenerate ignored development outputs and `python scripts/development_error_diagnostics.py` to recreate the M1–B3 borough-error comparisons in §22.3. Compare the generated development metric tables with the recorded values above. Source-code and documentation commit/push status is tracked by Git, not implied by this evidence log.
+**Reproduction:** From the repository root, run `python -m unittest discover -s tests -p 'test_development_evaluation.py' -v` for self-contained synthetic QA, followed by `python scripts/run_pipeline.py` to regenerate ignored development outputs and `python scripts/development_error_diagnostics.py` to recreate the M1–B3 borough-error comparisons in §22.3. Compare the generated development metric tables with the recorded values above. Source-code and documentation commit/push status is tracked by Git, not implied by this evidence log.
 
 ---
 
@@ -2467,7 +2467,7 @@ From the repository root:
 ```bash
 python -m unittest discover -s tests -p 'test_explanatory.py' -v
 python -m unittest discover -s tests -p 'test_*.py' -v
-python src/run_pipeline.py
+python scripts/run_pipeline.py
 ```
 
 The pipeline builds and checks the common explanatory model table, then fits and structurally/numerically verifies E1–E4 before performing the separate, development-only predictive workflow. Existing development prediction and evaluation definitions are unchanged. The last command checks the integrated pipeline. The project author subsequently reported that the final local pipeline and test suite passed after diagnostic QA additions; this review did not independently rerun the complete raw-data pipeline.
@@ -2530,7 +2530,7 @@ These are the **ten highest** local Cook's distances. Their leverage is not exce
 
 - `src/youth_offer/explanatory_diagnostics.py` contains the fit comparisons, rate-scale errors, Pearson residuals/dispersion, residual table, lagged-residual pairs/correlation and influence table. `src/youth_offer/explanatory_plots.py` contains the two-panel scatterplot and borough × year heatmap. `src/run_pipeline.py` calls these after fitting E1–E4.
 - The `qa.py` checks compare individual Pearson residuals and Pearson chi-square with `statsmodels`, check row alignment and reconstruct MAE/RMSE, and check leverage trace/ranges and finite Cook's distances. The **six** raw-data-independent tests in `tests/test_explanatory_diagnostics.py` cover known rate-error and deviance values, source and prediction-index mismatches, Pearson residual/dispersion known answers and invalid inputs, and lag-pair construction on a shuffled complete panel.
-- **Locally reported validation:** all six diagnostic tests passed, as did the full test suite and `python src/run_pipeline.py` after final input-validation fixes. To reproduce, provide `data/raw/key-stage-4-destination-measures_2023-24.zip` and run `python -m unittest discover -s tests -p 'test_*.py' -v` and `python src/run_pipeline.py` from the repository root. Generated plots under `outputs/explanatory/` are git-ignored; numeric summaries currently print to standard output and are recorded here rather than exported as a separate diagnostic results file.
+- **Locally reported validation:** all six diagnostic tests passed, as did the full test suite and the pipeline entry point then at `src/run_pipeline.py` after final input-validation fixes. To reproduce today, provide `data/raw/key-stage-4-destination-measures_2023-24.zip` and run `python -m unittest discover -s tests -p 'test_*.py' -v` and `python scripts/run_pipeline.py` from the repository root. Generated plots under `outputs/explanatory/` are git-ignored; numeric summaries currently print to standard output and are recorded here rather than exported as a separate diagnostic results file.
 - **Conclusion / checkpoint:** E3's borough/year structure improves in-sample fit substantially; the E4 composition block yields only a small extra deviance reduction. Dispersion above one and several influential borough-years require planned inferential and group-deletion sensitivity checks. No evidence currently warrants reopening the frozen E4 mean specification, but full adequacy, effect significance, independent errors, causality and predictive utility have **not** been established.
 - **Pending frozen work:** define probability-scale associations and adjusted cohort-year contrasts; implement approximately 2,000 whole-borough-trajectory bootstrap refits subject to stability, a borough-clustered covariance cross-check, and all six D9a6 sensitivity checks (equal-weight rate regression, disadvantage replacing FSM, leave-one-borough, leave-one-cohort, joint 2019/20–2020/21 regime exclusion and linear cohort trend). Resampling boroughs does not create new independent common-year regimes. Freeze a common reference distribution before optional adjusted borough summaries.
 - **Predictive holdout boundary:** using 2022/23 outcomes in all-seven-cohort **explanatory** fits and their diagnostics is explicitly permitted. No 2022/23 **predictive** score, forecast-method comparison or final evaluation was constructed or examined. That boundary remains locked until the separate pre-final audit and formal release.
@@ -2747,3 +2747,5 @@ The publication script contains no estimator fitting, bootstrap execution, predi
 **Post-application D10 checkpoint (3 November 2026; author-reported):** Both publication patches applied locally and the full test suite and seven-figure regeneration completed successfully. This verifies local execution as reported by the author, not independent raw-data refitting, external CI or publication. Remaining final checks are the staged-file list, the actual regenerated figure values and GitHub rendering. No model or accepted D1–D9g result changed.
 
 **D10 path-only refactor verification boundary (3 November 2026):** Executable `src/run_pipeline.py` and `src/run_final_predictive.py` are proposed to move to `scripts/` with only import-path setup and executable documentation updated; analytical functions, source archive location, outputs, and model results are unchanged. Patch construction/inspection in a representative mirror does not establish execution in the author's actual checkout. Re-run the full tests, default predictive preflight and publication-figure regeneration locally before publishing; preserve prior output CSVs and keep historical checkpoint statements intact.
+
+**Post-commit status (3 November 2026):** Read-only GitHub inspection confirms that the refactor is present in commit `142b955d53ca0c1b7ed6dfaa119ea3d1f8c15d2d`. The author reports successful tests, full pipeline, final predictive metric reproduction and seven-figure regeneration on the actual checkout. These are local verification claims, not independently witnessed CI. Earlier commands using `src/run_pipeline.py` or `src/run_final_predictive.py` record the pre-refactor layout; the current executable paths are in `scripts/` (see README). The repository remains private pending final checks.

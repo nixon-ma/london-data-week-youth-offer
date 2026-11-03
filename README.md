@@ -4,6 +4,8 @@
 
 How can London use published school-leaver destination data to identify persistent disparities—and how much does a forecasting model add beyond simple historical benchmarks?
 
+The original Youth Offer challenge asked how to help the most young Londoners into work or training. This KS4 dataset cannot show which interventions would work or represent all young Londoners; it can identify recorded destination patterns and test retrospective forecasting methods.
+
 This project analyses **32 London Local Authorities × seven KS4 cohorts (2016/17–2022/23)**: 224 borough–cohort observations for pupils in state-funded mainstream and special schools. It separates **descriptive patterns**, **historical explanatory associations**, and **retrospective next-cohort prediction**.
 
 > **Read this first:** The measured outcome is *outside recorded sustained education, employment or apprenticeship destinations*; **it is not a direct NEET rate**. Borough geography refers to the pupil's **school/institution**, not necessarily where the pupil lives. None of the analysis estimates the causal effect of an intervention.
@@ -34,7 +36,9 @@ Across years, borough differences were moderately persistent and **27 of 32 boro
 
 ![Paired-dot comparisons for disadvantage, FSM, identified SEN and sex in 2022/23](docs/figures/03_subgroup_disparities.svg)
 
-Disadvantage and identified SEN show large **descriptive** differences. FSM overlaps with disadvantage and is corroborating—not independent—evidence. The disadvantage values are **approximate LA-aggregated rates** using the official published destination percentages and disclosure-rounded cohort weights; exact disadvantage pupil counts cannot be reconstructed from this file. Other subgroup findings, including ethnicity and within-SEN differences, are documented in [the audit](DATA_AUDIT.md#144-subgroup-disparities).
+Disadvantage and identified SEN show large **descriptive** differences. FSM overlaps with disadvantage and is corroborating—not independent—evidence. The disadvantage values are **approximate LA-aggregated rates** using the official published destination percentages and disclosure-rounded cohort weights; exact disadvantage pupil counts cannot be reconstructed from this file.
+
+Ethnicity also shows variation in recorded destinations, although patterns differ across groups and should not be generalised to overall youth unemployment or NEET outcomes. Identified SEN does not capture every disability or health-related barrier. Other subgroup results, including within-SEN differences, are documented in [the audit](DATA_AUDIT.md#144-subgroup-disparities).
 
 ### 4. What historical structure do E1–E4 and composition associations reveal?
 
@@ -64,7 +68,7 @@ All four approaches were frozen before final scoring: **B1** borough persistence
 
 E1–E4 use contemporaneously observed outcomes and (for E4) same-cohort composition; their fitted error is **in-sample**, never a forecast score. M1 uses **previous-cohort** features only. The explanatory and predictive questions must not be conflated.
 
-Alternative provision is a separate secondary population: its London-wide 2022/23 adverse rate was **35.0%**, but borough-level AP samples can be very small and should not be ranked naively. The descriptive subgroup findings do not imply intervention effects.
+Alternative provision is a separate secondary population: **607 pupils (35.0%)** were outside recorded sustained destinations in 2022/23. These pupils are **not part of** the primary-population count of 5,912. Borough-level AP samples can be very small and should not be ranked naively. The descriptive subgroup findings do not imply intervention effects.
 
 ## Implications for the Youth Offer
 
@@ -75,7 +79,7 @@ These results help **frame questions for further investigation**, rather than id
 - **Not NEET or causality:** An unrecorded sustained destination is not proof of NEET status; composition associations are not individual-level effects and do not identify policies that would improve outcomes.
 - **Limited temporal evidence:** Only seven common year regimes and **one final predictive target cohort** are available. Boroughs share common shocks; nominal borough-bootstrap intervals do not capture uncertainty about future year regimes.
 - **Not point-in-time operational forecasting:** Data are retrospectively harmonised and may have publication lags/revisions. Historical publication vintages and feature release dates were **not** verified for operational availability.
-- **Validation provenance:** D9e exports were checked numerically; the user reproduced final D9g metrics locally, with an additional independent reconstruction check. These are not claims of remotely witnessed CI or production deployment.
+- **Reproduction evidence:** The full test suite and pipeline were run locally; D9e exports were checked for numerical consistency, and final D9g metrics were reproduced on the project checkout and cross-checked by a separate reconstruction. No CI or production-deployment validation is claimed.
 
 ## Reproduce locally
 

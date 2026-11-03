@@ -15,9 +15,8 @@ venv/
 data/raw/
 *.zip
 
-# Generated outputs
+# Generated local outputs (publication figures in docs/figures/ are tracked)
 outputs/
-reports/generated/
 
 # OS files
 .DS_Store
