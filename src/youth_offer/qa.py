@@ -5,6 +5,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.linear_model import QuantileRegressor
 
 from youth_offer.predictive import M1_FEATURE_COLUMNS
+from youth_offer import pathways
 
 EXPECTED_YEARS = {
     "201617",
@@ -1604,3 +1605,65 @@ def assert_explanatory_influence_table(influence_table, result):
         rtol=0,
         atol=1e-7,
     )
+
+
+def assert_exact_partition_accounting(exact: pd.DataFrame) -> None:
+    """Verify subgroup partitions and the frozen three-way headline outcome."""
+
+    pivot = exact.pivot(
+        index=list(pathways.KEY), columns="destination", values="pupil_count"
+    )
+    cohort = exact.drop_duplicates(list(pathways.KEY)).set_index(list(pathways.KEY))["cohort_count"]
+    if not pivot.index.equals(cohort.index):
+        cohort = cohort.reindex(pivot.index)
+    if not pivot.sum(axis=1).eq(cohort).all():
+        raise AssertionError("Five destinations do not reconstruct cohort")
+
+    # A family's groups are a partition only within that family; SEN detail
+    # reconstructs Identified SEN, not the whole cohort.
+    group_levels = ["time_period", "new_la_code", "destination"]
+    for family in ("FSM", "SEN", "Sex", "Ethnicity"):
+        reconstructed = exact.loc[exact.family.eq(family)].groupby(group_levels)["pupil_count"].sum()
+        overall = exact.loc[exact.family.eq("Overall")].set_index(group_levels)["pupil_count"]
+        if not reconstructed.sort_index().equals(overall.sort_index()):
+            raise AssertionError(f"{family} destination partition does not reconcile")
+
+    detail = exact.loc[exact.family.eq("SEN detail")].groupby(group_levels)["pupil_count"].sum()
+    identified = (
+        exact.loc[exact.family.eq("SEN") & exact.group.eq("Identified SEN")]
+        .set_index(group_levels)["pupil_count"]
+    )
+    if not detail.sort_index().equals(identified.sort_index()):
+        raise AssertionError("Detailed SEN outcomes do not reconcile to identified SEN")
+
+    overall = pivot.xs(("Overall", "All pupils"), level=("family", "group"))
+    if not (overall[pathways.EDUCATION] + overall[pathways.EMPLOYMENT] + overall[pathways.APPRENTICESHIPS]
+            + overall[pathways.NOT_RECORDED] + overall[pathways.ACTIVITY_NOT_CAPTURED]).eq(
+                cohort.xs(("Overall", "All pupils"), level=("family", "group"))
+            ).all():
+        raise AssertionError("Overall headline reconciliation failed")
+
+
+def assert_disadvantage_panel(published: pd.DataFrame, exact: pd.DataFrame) -> None:
+    """Require both published disadvantage groups in every primary borough/cohort."""
+
+    overall = (
+        exact.loc[exact.family.eq("Overall"), ["time_period", "new_la_code"]]
+        .drop_duplicates()
+    )
+    expected_keys = set(overall.itertuples(index=False, name=None))
+    observed = set(
+        published[["time_period", "new_la_code", "group"]]
+        .itertuples(index=False, name=None)
+    )
+    expected = {
+        (year, borough, group)
+        for year, borough in expected_keys
+        for group in pathways.DISADVANTAGE_GROUPS
+    }
+
+    if observed != expected:
+        raise ValueError(
+            "Incomplete disadvantage borough/cohort coverage: "
+            f"missing={len(expected - observed)}, unexpected={len(observed - expected)}"
+        )
