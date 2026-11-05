@@ -2788,3 +2788,32 @@ The publication script contains no estimator fitting, bootstrap execution, predi
 **Disadvantage disclosure:** The separate disadvantage slice contains **2,240 rows** (448 borough/cohort/group cells × five destinations). There are **36 suppressed (`c`) published percentages**, affecting 18 borough/cohort/group cells, all for employment or apprenticeships in 2019/20, 2021/22 or 2022/23. Its displayed count field contains 36 `c` and 28 `low` values; remaining numeric counts are disclosure-rounded. None were imputed. A pooled London percentage is withheld whenever any contributing borough percentage is suppressed: **12 of 70** year/group/pathway combinations lack complete coverage. Even with complete coverage, averages weighted by published rounded cohort counts remain approximate.
 
 **Outputs and limits:** The additive runner exports exact destination cells, London pathway shares, endpoint differences, published disadvantage rows and disclosure coverage to `outputs/destination_pathways/`, and writes the sustained-pathway Figure 8. D11a is a historical description of recorded KS4 outcomes by school location. It does not measure citywide NEET, pupil residence, programme eligibility, participation barriers or the effect of Youth Offer support. Detailed borough/group burden and persistence belong to D11b; subgroup-composition decomposition belongs to D11c.
+
+## 30.2 D11a publication verification and D11b scoping audit (5 November 2026)
+
+**Published checkpoint:** Read-only GitHub review confirms `d98e145b6cf251bc5c913e0ab0cb03e5a1d57891` on `d9-implementation`, directly following the agreed D11-scope commit. The seven changed files are the two research logs, `src/youth_offer/pathways.py`, the additive assertions in `src/youth_offer/qa.py`, `scripts/analyse_destination_pathways.py`, `tests/test_pathways.py` and Figure 8. No frozen modelling or evaluation code was changed. After incremental fixes, nine focused pathway tests and the full local suite, analysis runner and whitespace checks were reported as passing on the project checkout. This is maintainer-reported local execution, not independently witnessed CI. It supersedes the earlier seven-test/pending-checkout wording in §30.1.
+
+**D11b source check:** A fresh read of the frozen `key-stage-4-destination-measures_2023-24.zip` returned the same 96,792 target London LA rows and 16,800 exact five-pathway rows as D11a. The adverse count was recomputed from the two distinct adverse components, not from rounded percentages. The four 2022/23 primary-group totals reconcile to the frozen 89,811-pupil cohort and 5,912 adverse outcomes separately within each partition:
+
+| 2022/23 group | Cohort | Adverse pupils | Adverse rate |
+| --- | ---: | ---: | ---: |
+| FSM eligible | 24,474 | 2,676 | 10.93% |
+| Not known FSM eligible | 65,337 | 3,236 | 4.95% |
+| Identified SEN | 14,943 | 1,700 | 11.38% |
+| No identified SEN | 74,868 | 4,212 | 5.63% |
+
+**Scoping comparisons:** London-wide adverse-rate gaps were calculated by aggregating counts and denominators within each named group first. These exploratory calculations informed the agreed method; the D11b production tables and Figure 9 have **not** yet been implemented or verified.
+
+| Cohort period | FSM gap (pp) | SEN gap (pp) | Boroughs with positive gap (FSM; SEN) |
+| --- | ---: | ---: | ---: |
+| 2022/23 | +5.98 | +5.75 | 32/32; 32/32 |
+| 2021/22–2022/23 pooled | +5.70 | +5.96 | 32/32; 32/32 |
+| 2020/21–2022/23 pooled | +5.25 | +5.56 | 32/32; 32/32 |
+
+Across the seven single-cohort panels, FSM gaps were positive in **221/224** borough-years and identified-SEN gaps in **223/224**. The corresponding counts of boroughs with positive gaps in every one of the seven years are **29/32** and **31/32**. These are descriptive signs across successive pupil cohorts, not independent tests or evidence of assured future stability. For pooled comparisons, a group's rate uses its summed adverse count divided by its summed cohort count, so the gap is not an average of annual differences.
+
+**Disadvantage availability:** The *overall sustained* destination percentage is numeric for both published disadvantage categories in all **224 borough/cohort cells** (448 subgroup percentages). Consequently, `100 − sustained %` is available throughout for descriptive disadvantage adverse rates. This is distinct from D11a's five-way disadvantage pathway analysis: individual employment/apprenticeship percentages have disclosure suppression. The published subgroup counts are separately rounded; derived exact adverse counts, exact group-share-of-burden calculations and exact cohort pooling are not valid for disadvantage. Any pooled disadvantage rate will be an approximation using published percentages and rounded cohort weights.
+
+**AP and reporting constraints:** In 2022/23, the separate London AP population has a cohort of **1,735** and **607** adverse outcomes (**290** not recorded sustained; **317** activity not captured), consistent with D6. For historical comparison, D5e's stable 32-borough AP panel excludes the two City of London `n=1` observations from ordinary panels while retaining them in the raw audit. Borough location denotes school/institution location, not residence. Small denominator risks are material for detailed ethnicity/SEN and AP comparisons; D11b will report denominators and descriptive stability checks, not unqualified ranks or inferential certainty.
+
+**Outstanding verification:** The accepted D11b design is recorded in `DECISIONS.md`. Its production tables, code, tests and Figure 9 remain pending. Before reporting them, verify borough/cohort and group-key coverage, exact partition sums, no repeated denominators over destination rows, one- and multi-year rate arithmetic, ties versus positive gaps, mainstream-only separation and disclosure-aware disadvantage calculations. No change to the released D9g holdout, model performance figures or D11c decomposition is authorised.
