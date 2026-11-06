@@ -12,6 +12,9 @@ from youth_offer.model_tables import (
     ACTIVITY_NOT_CAPTURED,
 )
 
+MAINSTREAM_POPULATION = "State-funded mainstream schools"
+AP_POPULATION = "Alternative provision"
+
 EDUCATION = "Sustained education destination"
 EMPLOYMENT = "Sustained employment destination"
 APPRENTICESHIPS = "Sustained apprenticeships"
@@ -43,13 +46,13 @@ TOTAL_FIELDS = (
 KEY = ("time_period", "new_la_code", "family", "group")
 
 
-def _select_family(source: pd.DataFrame, family: str) -> pd.DataFrame:
+def _select_family(source: pd.DataFrame, family: str, population: str) -> pd.DataFrame:
     field, topic, values = EXACT_FAMILIES[family]
     varying = {field} if field else set()
     if topic is not None:
         varying.add("breakdown_topic")
 
-    mask = source["establishment_type_group"].eq(PRIMARY_POPULATION)
+    mask = source["establishment_type_group"].eq(population)
     mask &= source["destination_description"].isin(DESTINATIONS)
     for column in TOTAL_FIELDS:
         if column not in varying:
@@ -69,10 +72,25 @@ def _select_family(source: pd.DataFrame, family: str) -> pd.DataFrame:
     return frame.drop(columns=[field] if field else [])
 
 
-def build_exact_pathways(source: pd.DataFrame) -> pd.DataFrame:
+def build_exact_pathways(
+    source: pd.DataFrame,
+    population: str = PRIMARY_POPULATION,
+    families: tuple[str, ...] | None = None,
+) -> pd.DataFrame:
     """One row per borough/cohort/family/group/exclusive destination."""
+    selected = tuple(EXACT_FAMILIES) if families is None else tuple(families)
+    if population not in (PRIMARY_POPULATION, MAINSTREAM_POPULATION, AP_POPULATION):
+        raise ValueError(f"Unsupported exact-count population: {population}")
+    if ("Overall" not in selected or len(selected) != len(set(selected))
+            or any(family not in EXACT_FAMILIES for family in selected)):
+        raise ValueError("Families must contain Overall and have unique, known names")
+    if "SEN detail" in selected and "SEN" not in selected:
+        raise ValueError("SEN detail requires the SEN family")
+    if population == AP_POPULATION and selected != ("Overall",):
+        raise ValueError("AP has no usable LA-level subgroup families")
+
     result = pd.concat(
-        [_select_family(source, family) for family in EXACT_FAMILIES],
+        [_select_family(source, family, population) for family in selected],
         ignore_index=True,
     ).rename(columns={"destination_description": "destination"})
 
@@ -120,7 +138,8 @@ def build_exact_pathways(source: pd.DataFrame) -> pd.DataFrame:
         result.loc[result.family.eq("Overall"), ["time_period", "new_la_code"]]
         .itertuples(index=False, name=None)
     )
-    for family, (_, _, allowed) in EXACT_FAMILIES.items():
+    for family in selected:
+        _, _, allowed = EXACT_FAMILIES[family]
         expected_groups = ("All pupils",) if family == "Overall" else allowed
         expected_keys = {
             (year, borough, group)
@@ -236,6 +255,45 @@ def build_disadvantage_published(source: pd.DataFrame) -> pd.DataFrame:
         raise ValueError("Incomplete or inconsistent disadvantage pathway cells")
 
     return published.sort_values([*key, "destination"]).reset_index(drop=True)
+
+
+def build_disadvantage_sustained(source: pd.DataFrame) -> pd.DataFrame:
+    """Extract published sustained percentages without inferring exact counts."""
+    mask = (source.establishment_type_group.eq(PRIMARY_POPULATION)
+            & source.destination_description.eq(SUSTAINED)
+            & source.sex.eq("Total") & source.ethnicity_major.eq("Total")
+            & source.ethnicity_minor.eq("Total")
+            & source.disadvantage_status.isin(DISADVANTAGE_GROUPS)
+            & source.breakdown_topic.eq("Total") & source.breakdown.eq("Total"))
+
+    published = source.loc[mask, [
+        "time_period", "new_la_code", "la_name", "disadvantage_status",
+        "cohort_count", "pupil_percent",
+    ]].rename(columns={
+        "disadvantage_status": "group",
+        "cohort_count": "cohort_count_disclosure_rounded",
+        "pupil_percent": "published_sustained_pct_token",
+    }).copy()
+
+    key = ["time_period", "new_la_code", "group"]
+    if published.duplicated(key).any():
+        raise ValueError("Non-unique disadvantage sustained-percentage keys")
+
+    status = _code_status(published.published_sustained_pct_token)
+    if not status.eq("numeric").all():
+        raise ValueError("Non-numeric published disadvantage sustained percentage")
+
+    published["cohort_count_disclosure_rounded"] = pd.to_numeric(
+        published.cohort_count_disclosure_rounded, errors="raise"
+    ).astype("int64")
+    published["sustained_pct_published"] = pd.to_numeric(
+        published.published_sustained_pct_token, errors="raise"
+    )
+    if (published.cohort_count_disclosure_rounded.le(0).any()
+            or not published.sustained_pct_published.between(0, 100).all()):
+        raise ValueError("Invalid published disadvantage cohort or sustained percentage")
+
+    return published.sort_values(key).reset_index(drop=True)
 
 
 def summarise_disadvantage_coverage(published: pd.DataFrame) -> pd.DataFrame:

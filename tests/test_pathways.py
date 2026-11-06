@@ -188,6 +188,102 @@ class PathwaysTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Five-way cohort accounting failed"):
             pathways.build_exact_pathways(source)
 
+    def test_population_selection_preserves_default_and_mainstream_partition(self):
+        source = self.source()
+        default = pathways.build_exact_pathways(source)
+        explicit = pathways.build_exact_pathways(
+            source, population=PRIMARY_POPULATION, families=tuple(pathways.EXACT_FAMILIES)
+        )
+        pd.testing.assert_frame_equal(default, explicit)
+
+        mainstream = source.copy()
+        mainstream["establishment_type_group"] = pathways.MAINSTREAM_POPULATION
+        mainstream["la_name"] = "Mainstream example"
+        selected = pathways.build_exact_pathways(
+            pd.concat([source, mainstream], ignore_index=True),
+            population=pathways.MAINSTREAM_POPULATION,
+            families=("Overall", "FSM", "SEN"),
+        )
+        self.assertEqual(set(selected.family), {"Overall", "FSM", "SEN"})
+        self.assertTrue(selected.la_name.eq("Mainstream example").all())
+        qa.assert_selected_partition_accounting(selected)
+
+    def test_ap_overall_only_and_invalid_selection_rejected(self):
+        source = self.source()
+        ap = source.loc[
+            source.breakdown_topic.eq("Total")
+            & source.sex.eq("Total")
+            & source.ethnicity_major.eq("Total")
+        ].copy()
+        ap["establishment_type_group"] = pathways.AP_POPULATION
+        result = pathways.build_exact_pathways(
+            ap, population=pathways.AP_POPULATION, families=("Overall",)
+        )
+        self.assertEqual(len(result), 5)
+        qa.assert_selected_partition_accounting(result)
+
+        with self.assertRaisesRegex(ValueError, "no usable LA-level subgroup"):
+            pathways.build_exact_pathways(
+                ap, population=pathways.AP_POPULATION, families=("Overall", "FSM")
+            )
+        with self.assertRaisesRegex(ValueError, "must contain Overall"):
+            pathways.build_exact_pathways(ap, families=("FSM",))
+        with self.assertRaisesRegex(ValueError, "requires the SEN family"):
+            pathways.build_exact_pathways(ap, families=("Overall", "SEN detail"))
+
+    def test_selected_partition_detects_inconsistent_subgroup(self):
+        selected = pathways.build_exact_pathways(
+            self.source(), families=("Overall", "FSM", "SEN")
+        )
+        first = selected.loc[
+            selected.family.eq("FSM") & selected.group.eq("FSM eligible")
+            & selected.destination.eq(pathways.EDUCATION)
+        ].index[0]
+        second = selected.loc[
+            selected.family.eq("FSM") & selected.group.eq("FSM eligible")
+            & selected.destination.eq(pathways.NOT_RECORDED)
+        ].index[0]
+        selected.loc[first, "pupil_count"] += 1
+        selected.loc[second, "pupil_count"] -= 1
+
+        with self.assertRaisesRegex(AssertionError, "FSM selected destination partition"):
+            qa.assert_selected_partition_accounting(selected)
+
+    def test_disadvantage_sustained_keeps_published_percent_not_rounded_count_rate(self):
+        source = self.source()
+        base = source.loc[
+            source.breakdown_topic.eq("Total")
+            & source.sex.eq("Total") & source.ethnicity_major.eq("Total")
+            & source.destination_description.eq(pathways.EDUCATION)
+        ].iloc[0].to_dict()
+        rows = []
+        for group, cohort, rate in [
+            ("Disadvantaged", "35", "88.3"),
+            ("Not known to be disadvantaged", "65", "95.1"),
+        ]:
+            row = {**base, "disadvantage_status": group,
+                   "cohort_count": cohort,
+                   "destination_description": "Sustained education, employment & apprenticeships",
+                   "pupil_percent": rate}
+            rows.append(row)
+
+        published = pathways.build_disadvantage_sustained(pd.DataFrame(rows))
+        qa.assert_disadvantage_sustained_panel(
+            published, pathways.build_exact_pathways(source)
+        )
+        self.assertEqual(set(published.sustained_pct_published), {88.3, 95.1})
+        self.assertEqual(set(published.cohort_count_disclosure_rounded), {35, 65})
+
+        with self.assertRaisesRegex(AssertionError, "Incomplete or duplicated"):
+            qa.assert_disadvantage_sustained_panel(
+                published.iloc[:1], pathways.build_exact_pathways(source)
+            )
+
+        suppressed = pd.DataFrame(rows)
+        suppressed.loc[0, "pupil_percent"] = "c"
+        with self.assertRaisesRegex(ValueError, "Non-numeric published disadvantage"):
+            pathways.build_disadvantage_sustained(suppressed)
+
 
 if __name__ == "__main__":
     unittest.main()

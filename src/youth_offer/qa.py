@@ -1667,3 +1667,138 @@ def assert_disadvantage_panel(published: pd.DataFrame, exact: pd.DataFrame) -> N
             "Incomplete disadvantage borough/cohort coverage: "
             f"missing={len(expected - observed)}, unexpected={len(observed - expected)}"
         )
+
+
+def assert_selected_partition_accounting(exact: pd.DataFrame) -> None:
+    """Validate partitions when only selected exact-count families are extracted."""
+    grain = ["time_period", "new_la_code", "destination"]
+    families = set(exact.family)
+    if "Overall" not in families:
+        raise AssertionError("Missing Overall family")
+
+    overall = (exact.loc[exact.family.eq("Overall")]
+               .set_index(grain)["pupil_count"].sort_index())
+    for family in ("FSM", "SEN", "Sex", "Ethnicity"):
+        if family not in families:
+            continue
+        reconstructed = (exact.loc[exact.family.eq(family)]
+                         .groupby(grain)["pupil_count"].sum().sort_index())
+        if not reconstructed.equals(overall):
+            raise AssertionError(f"{family} selected destination partition does not reconcile")
+
+    if "SEN detail" in families:
+        identified = (exact.loc[exact.family.eq("SEN") & exact.group.eq("Identified SEN")]
+                      .set_index(grain)["pupil_count"].sort_index())
+        detail = (exact.loc[exact.family.eq("SEN detail")]
+                  .groupby(grain)["pupil_count"].sum().sort_index())
+        if not detail.equals(identified):
+            raise AssertionError("Selected SEN detail does not reconcile to identified SEN")
+
+
+def assert_disadvantage_sustained_panel(published: pd.DataFrame, exact: pd.DataFrame) -> None:
+    """Require both published disadvantage percentages for each primary key."""
+    overall = (exact.loc[exact.family.eq("Overall"), ["time_period", "new_la_code"]]
+               .drop_duplicates())
+    expected_keys = {
+        (year, borough, group)
+        for year, borough in overall.itertuples(index=False, name=None)
+        for group in pathways.DISADVANTAGE_GROUPS
+    }
+    observed_keys = set(
+        published[["time_period", "new_la_code", "group"]]
+        .itertuples(index=False, name=None)
+    )
+    if observed_keys != expected_keys or len(published) != len(expected_keys):
+        raise AssertionError("Incomplete or duplicated disadvantage sustained percentages")
+
+    if (published.sustained_pct_published.isna().any()
+            or published.cohort_count_disclosure_rounded.le(0).any()):
+        raise AssertionError("Invalid published disadvantage sustained values")
+
+
+def assert_need_primary_panel(cells: pd.DataFrame, headline: pd.DataFrame) -> None:
+    """Verify the D11b seven-cohort 32-borough panel and frozen headline identity."""
+    keys = ["time_period", "new_la_code"]
+    overall = cells.loc[cells["family"].eq("Overall") & cells["group"].eq("All pupils")]
+    if (len(overall) != EXPECTED_ROWS or overall.duplicated(keys).any()
+            or set(overall["time_period"]) != EXPECTED_YEARS
+            or not overall.groupby("time_period")["new_la_code"].nunique().eq(32).all()
+            or overall["new_la_code"].nunique() != 32):
+        raise AssertionError("Incomplete primary D11b borough/cohort panel")
+    if overall.groupby("new_la_code")["la_name"].nunique().ne(1).any():
+        raise AssertionError("Inconsistent borough name for LA code")
+
+    expected_keys = set(overall[keys].itertuples(index=False, name=None))
+    for family, (_, _, groups) in pathways.EXACT_FAMILIES.items():
+        expected_groups = ("All pupils",) if family == "Overall" else groups
+        expected = {(year, borough, group) for year, borough in expected_keys
+                    for group in expected_groups}
+        subset = cells.loc[cells["family"].eq(family)]
+        observed = set(subset[[*keys, "group"]].itertuples(index=False, name=None))
+        if observed != expected or len(subset) != len(expected):
+            raise AssertionError(f"Incomplete D11b {family} group panel")
+
+    reference = headline[keys + ["cohort_count", "adverse_count",
+                                  pathways.NOT_RECORDED, pathways.ACTIVITY_NOT_CAPTURED]]
+    check = overall.merge(reference, on=keys, how="outer", validate="one_to_one",
+                          suffixes=("", "_frozen"), indicator=True)
+    if check["_merge"].ne("both").any():
+        raise AssertionError("D11b borough keys differ from frozen headline")
+    for a, b in [
+        ("cohort_count", "cohort_count_frozen"),
+        ("adverse_count", "adverse_count_frozen"),
+        ("not_recorded_count", pathways.NOT_RECORDED),
+        ("activity_not_captured_count", pathways.ACTIVITY_NOT_CAPTURED),
+    ]:
+        if not check[a].eq(check[b]).all():
+            raise AssertionError(f"D11b adverse counts differ from headline: {a}")
+
+    if not cells["adverse_count"].eq(
+        cells["not_recorded_count"] + cells["activity_not_captured_count"]
+    ).all():
+        raise AssertionError("D11b adverse-component accounting failed")
+    if cells["cohort_count"].le(0).any():
+        raise AssertionError("D11b zero subgroup denominator")
+
+
+def assert_need_period_reconciliation(
+    annual: pd.DataFrame, pooled: pd.DataFrame, period: str,
+) -> None:
+    """Pooled totals must equal exact sums, with each cohort counted once."""
+    from youth_offer import need
+
+    selected = annual.loc[annual["time_period"].isin(need.PERIOD_YEARS[period])]
+    expected = selected.groupby(list(need.GROUP_KEY), as_index=False)[list(need.COUNT_COLUMNS)].sum()
+    actual = pooled.loc[pooled["period"].eq(period)]
+    if (len(actual) != len(expected)
+            or actual.duplicated(list(need.GROUP_KEY)).any()):
+        raise AssertionError("D11b pooled subgroup keys incomplete or duplicated")
+    joined = expected.merge(actual, on=list(need.GROUP_KEY), validate="one_to_one",
+                            how="outer", indicator=True, suffixes=("_expected", ""))
+    if joined["_merge"].ne("both").any():
+        raise AssertionError("D11b pooled subgroup keys mismatch")
+    for column in need.COUNT_COLUMNS:
+        if not joined[column].eq(joined[f"{column}_expected"]).all():
+            raise AssertionError(f"D11b pooled {column} mismatch")
+    rate = 100 * actual["adverse_count"] / actual["cohort_count"]
+    if not np.allclose(actual["adverse_rate_pct"], rate, rtol=0, atol=1e-10):
+        raise AssertionError("D11b pooled adverse rate mismatch")
+
+
+def assert_need_secondary_population(
+    primary: pd.DataFrame, mainstream: pd.DataFrame, ap: pd.DataFrame,
+) -> None:
+    """Check expected coverage and keep mainstream and AP analytically distinct."""
+    keys = ["time_period", "new_la_code"]
+    first = primary.loc[primary["family"].eq("Overall")]
+    second = mainstream.loc[mainstream["family"].eq("Overall")]
+    third = ap.loc[ap["family"].eq("Overall")]
+    expected = set(first[keys].itertuples(index=False, name=None))
+    for name, frame in [("mainstream", second), ("AP", third)]:
+        observed = set(frame[keys].itertuples(index=False, name=None))
+        if observed != expected or len(frame) != len(expected):
+            raise AssertionError(f"Incomplete or unexpected {name} panel")
+    check = first.merge(second, on=keys, suffixes=("_combined", "_mainstream"),
+                        validate="one_to_one")
+    if (check["cohort_count_mainstream"] > check["cohort_count_combined"]).any():
+        raise AssertionError("Mainstream pupils exceed combined population")
