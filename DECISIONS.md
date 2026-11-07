@@ -1259,3 +1259,22 @@ Starting from the initial overall rate, subgroup shares can be changed first and
 **Interpretation:** Composition describes changes in *recorded* subgroup proportions, not why they changed. FSM eligibility is administrative and its changing share should not be read simply as a change in deprivation. Within-group contributions compare different pupil cohorts, not the same pupils over time; changes in each group's membership, borough distribution and unmeasured circumstances may also affect its observed rate. Neither term is a causal effect or an estimate of achievable Youth Offer benefit. Keep D11c distinct from D11b subgroup gaps and the borough-level E4 composition associations.
 
 **Reporting and verification:** Report London pupil-weighted results in one six-row table (FSM and SEN across three comparisons), with composition, within-group and observed total changes in percentage points, displayed to three decimals. Retain group-level counts, shares, rates and contributions in no more than one machine-readable output. Do not add a public figure or borough ranking; borough-specific components do not generally sum to the London decomposition when borough population weights change. Do not report composition as a percentage of the total change because offsetting terms make such percentages unstable. Verify unique keys, complete periods and groups, exact partition-to-headline totals (cohorts and both adverse components), positive denominators and the identity against independently calculated overall rates to `1e-10` pp for every comparison and partition. Use numeric exact counts, not published rounded percentages; a `low` percentage token does not invalidate an accompanying exact count. Include synthetic tests for composition-only, rate-only, simultaneous, offsetting, zero-change and reversed-endpoint cases, and rejection tests for missing or duplicated cells. Record small denominators if borough diagnostics are examined. No inference, new model or changes to D9g/D11a/D11b functionality are authorised. D11c results remain pending implementation and verification.
+
+## D11c — Implementation and production findings (6 November 2026)
+
+**Implementation:** `src/youth_offer/historical_change.py` implements the approved symmetric decomposition using D11a/D11b exact adverse cells. `scripts/analyse_historical_change.py` pools counts and denominators across the selected cohorts and all 32 boroughs before calculating London shares and rates. `tests/test_historical_change.py` covers arithmetic identities and invalid inputs. The runner prints the six comparisons and writes one detailed CSV, `outputs/destination_need/historical_change_details.csv`. No figure, borough ranking or additional model was introduced.
+
+**London pupil-weighted results (percentage points):**
+
+| Comparison | Partition | Composition | Within-group | Observed change |
+| --- | --- | ---: | ---: | ---: |
+| 2016/17 → 2022/23 | FSM | +0.480 | +0.139 | +0.619 |
+| 2016/17 → 2022/23 | SEN | +0.170 | +0.448 | +0.619 |
+| 2016/17–2018/19 → 2021/22–2022/23 pooled | FSM | +0.441 | −0.108 | +0.332 |
+| 2016/17–2018/19 → 2021/22–2022/23 pooled | SEN | +0.117 | +0.215 | +0.332 |
+| 2021/22 → 2022/23 | FSM | +0.106 | +0.591 | +0.697 |
+| 2021/22 → 2022/23 | SEN | +0.029 | +0.667 | +0.697 |
+
+**Findings:** Over the full period, changes in recorded FSM proportions contribute more than changes in within-FSM rates; the opposite holds for the SEN partition. The pooled comparison shows a positive FSM composition term partly offset by a negative within-group term. Within-group changes dominate the 2021/22–2022/23 increase under both partitions. FSM and SEN are alternative classifications of the same pupils: their contributions must not be added or treated as causal effects. D11c accounts for historical change; D11b describes subgroup gaps and E4 estimates borough-level associations.
+
+**Verification and status:** The local runner reported exact subgroup-to-headline reconciliation and passed the decomposition identity checks. Independent recalculation from the frozen DfE release agreed with all 12 exported group rows and six London results (maximum identity residual `1.11e-15` pp; required tolerance `1e-10` pp). Eleven focused synthetic tests passed in isolation. Full local regression-suite output has not been supplied. The implementation was applied locally, but GitHub publication has not been confirmed. This checkpoint supersedes the implementation-pending status above; D9g, D11a and D11b remain unchanged.
