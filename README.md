@@ -10,11 +10,15 @@ The analysis covers **seven KS4 cohorts (2016/17–2022/23)** and **32 London sc
 
 ## Findings in brief
 
-- **Which pupils merit closer investigation?** In 2022/23, disadvantaged pupils had an approximately **10.8%** adverse rate versus **4.6%** among those not known disadvantaged. In the overlapping exact-count comparison, pupils eligible for free school meals (FSM) had a **10.93%** rate versus **4.95%** among those not known eligible; pupils with identified special educational needs (SEN) had an **11.38%** rate versus **5.63%** without identified SEN. Alternative-provision (AP) leavers, a separate population, had a **34.99%** adverse rate. Yet **54.7%** of adverse records were outside FSM eligibility and, separately, **71.2%** outside identified SEN. Tailored investigation must not become exclusion by group label.
+- **Which pupils merit closer investigation?** In 2022/23, adverse rates were higher among disadvantaged pupils (approximately **10.8% versus 4.6%** for those not known disadvantaged). Exact-count comparisons also showed higher rates for pupils eligible for free school meals (FSM: **10.93% versus 4.95%** for those not known eligible) and pupils with identified special educational needs (SEN: **11.38% versus 5.63%** for those without identified SEN). Alternative-provision (AP) leavers, analysed separately, had a **34.99%** adverse rate. Yet **54.7%** of adverse records were outside FSM eligibility and, separately, **71.2%** outside identified SEN. Tailored investigation must not become exclusion by group label.
 - **Where is observed need concentrated?** Lambeth, Islington, Greenwich and Haringey had the four highest seven-cohort mean rates; Newham and Croydon had the largest adverse pupil counts in 2022/23. Rates indicate prevalence, counts indicate observed scale, and neither establishes how many pupils could benefit from an intervention.
 - **What did modelling contribute?** Borough and cohort-year structure substantially improved *in-sample* fit; aggregate composition added little further. In retrospective forecasting, the simple London-plus-borough-offset benchmark **B3** had lower mean absolute error than the learned model **M1** in the single final cohort (**0.878 versus 0.979 percentage points**). Neither result establishes which intervention would work.
 
 Together, the findings justify investigating **London-wide coordination with local delivery, better destination follow-up, needs-based support available beyond higher-rate groups, and credible pilot evaluation before scaling**. They do not provide an intervention-priority ranking or an optimal funding allocation.
+
+## Report structure
+
+**Sections 1–3** focus on the overall adverse-destination rate: its variation across boroughs and cohorts, the associations captured by explanatory models, and retrospective forecast performance against simple benchmarks. **Sections 4–5** examine what lies beneath that rate, including recorded destination pathways and subgroup differences, before separating historical changes in group shares from changes in within-group rates. **Section 6** considers what the findings imply for the Youth Offer and what further evidence would be needed to design and evaluate support.
 
 ## 1. Historical patterns: time, place and pupil groups
 
