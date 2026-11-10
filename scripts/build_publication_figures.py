@@ -193,9 +193,12 @@ def fig_subgroups(london, out):
     ax.legend(loc="lower right", frameon=False, fontsize=9)
     ax.grid(axis="x", color=FAINT)
     ax.set_axisbelow(True)
-    fig.text(.12, .01, "Disadvantage: approximate LA-aggregated rate from published percentages; FSM overlaps with disadvantage.",
-             fontsize=8.4, color=GREY)
-    fig.tight_layout(rect=(0, .035, 1, 1))
+    fig.text(.12, .014,
+             "Blue points, top to bottom: not known disadvantaged; not known FSM eligible; no identified SEN; female.\n"
+             "Denominator: each group's own KS4 cohort across 32 London school-location boroughs.\n"
+             "Disadvantage approximate (rounded percentages and cohort counts); FSM overlaps disadvantage.",
+             fontsize=8.4, color=GREY, va="bottom", linespacing=1.3)
+    fig.tight_layout(rect=(0, .14, 1, 1))
     save(fig, out, "03_subgroup_disparities")
 
 
@@ -252,15 +255,17 @@ def fig_explanatory(d9e, out):
 
 
 
-# Exact predeclared in-sample E1–E4 MAE from DATA_AUDIT.md §23.5.
-# The existing pipeline prints these diagnostic results but does not export them
-# to a CSV; this frozen display-only table is NOT a new model fit or forecast.
-EXPLANATORY_FIT_MAE_PP = {
-    "E1": 0.937282,
-    "E2": 0.567593,
-    "E3": 0.447924,
-    "E4": 0.447420,
-}
+def load_explanatory_fit_mae(d9e):
+    """Read the pipeline's E1–E4 in-sample errors for Figure 6."""
+    metrics = read_export(d9e.parent / "e1_e4_fit_metrics.csv",
+                          ["model", "mae_pp", "rmse_pp"])
+    models = ["E1", "E2", "E3", "E4"]
+    if len(metrics) != 4 or set(metrics.model) != set(models):
+        raise ValueError("Expected exactly one in-sample fit-metrics row per E1–E4 model")
+    values = metrics.set_index("model").loc[models, ["mae_pp", "rmse_pp"]].to_numpy(dtype=float)
+    if not np.isfinite(values).all() or (values < 0).any():
+        raise ValueError("Invalid E1–E4 in-sample fit metrics")
+    return values[:, 0]
 
 
 def fig_explanatory_structure(d9e, out):
@@ -283,9 +288,7 @@ def fig_explanatory_structure(d9e, out):
     if not (np.isfinite([*estimates, *lower, *upper]).all()
             and np.all(lower <= estimates) and np.all(estimates <= upper)):
         raise ValueError("Invalid composition bootstrap intervals")
-    fit = np.array(list(EXPLANATORY_FIT_MAE_PP.values()), dtype=float)
-    if not (np.isfinite(fit).all() and np.all(fit >= 0)):
-        raise ValueError("Invalid audited E1–E4 fit errors")
+    fit = load_explanatory_fit_mae(d9e)
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13.2, 5.5),
                                    gridspec_kw={"width_ratios": [1, 1.15]})

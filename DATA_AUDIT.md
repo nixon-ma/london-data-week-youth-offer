@@ -22,9 +22,12 @@ The introduction deck emphasises explaining and evaluating analytical decisions,
 ## 1.3 Raw dataset supplied
 
 - Archive: `key-stage-4-destination-measures_2023-24.zip`
+- Source: Department for Education, [Key stage 4 destination measures, 2023/24 release](https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-destination-measures/2023-24/explore)
 - Data file: `data/ees_ks4_202223_api.csv`
 - Guidance file: `data-guidance/data-guidance.txt`
 - Raw CSV size: **1,871,739 rows × 35 columns**
+- Archive SHA-256: `dfb0b6bd03928d14679a4ea78162d4bceac508c02d3774456a949738b1b4ec5f`
+- CSV member SHA-256: `c7ae8b0fe4d098922b9ae9ed2262284fe4622249fbc3a95cbd8c93dee88c9721`
 
 The file exceeds Excel's worksheet limit of 1,048,576 rows, so Excel cannot be relied on to display the full raw dataset. Programmatic inspection is required.
 
@@ -2750,6 +2753,8 @@ The publication script contains no estimator fitting, bootstrap execution, predi
 
 **Post-commit status (3 November 2026):** Read-only GitHub inspection confirms that the refactor is present in commit `142b955d53ca0c1b7ed6dfaa119ea3d1f8c15d2d`. The author reports successful tests, full pipeline, final predictive metric reproduction and seven-figure regeneration on the actual checkout. These are local verification claims, not independently witnessed CI. Earlier commands using `src/run_pipeline.py` or `src/run_final_predictive.py` record the pre-refactor layout; the current executable paths are in `scripts/` (see README). The repository remains private pending final checks.
 
+**Figure 6 reproducibility refinement (8 November 2026; pending local verification):** The pipeline now exports its existing borough-unweighted in-sample E1–E4 MAE and RMSE to `outputs/explanatory/e1_e4_fit_metrics.csv`; Figure 6 reads these calculated values, requiring exactly one valid row for each model. This removes display-only MAE literals without changing fitted models, diagnostics, inferential results or predictive evaluation. The numerical evidence in §23.5 remains the reference for verification. Full local tests, pipeline execution and figure regeneration are required before the refinement is marked verified.
+
 ---
 
 # 30. D11 — Pre-implementation evidence and inspection checkpoint (4 November 2026)
@@ -2944,3 +2949,11 @@ The separate predictive track tested chronological forecasts against simple benc
 | **Evaluation before scaling** | Define a pilot with its eligible population, intended support and outcomes before delivery. | Credible comparison with usual provision (randomised where feasible, otherwise justified), prespecified follow-up horizon, additional sustained participation, ascertainment quality, reach, equity, delivery feasibility and cost. |
 
 Historical counts indicate observed scale, not the number eligible, reachable or helped; relative rates do not measure individual risk or intervention response. The wider Youth Offer requires current, residence-linked and service-level evidence. These findings support investigation and evaluation, **not present-day allocation decisions or a claim to maximise additional successful outcomes**. D11e remains deferred pending an explicit comparability gate; final README/results integration will present the complete D1–D11d storyline.
+
+---
+
+# 31. Publication reproducibility environment (8 November 2026)
+
+**Locally verified environment:** Python 3.14.3; NumPy 2.4.4; pandas 3.0.1; SciPy 1.18.0; scikit-learn 1.9.0; statsmodels 0.15.0; Matplotlib 3.10.8. The maintainer reported 90 passing tests, 2,000/2,000 successful bootstrap refits, reproduced final-cohort metrics and historical-change identities, and regeneration of all nine publication figures. After removing the Figure 6 MAE literals, E1–E4's pipeline-exported values matched the independently audited results. These are local verification reports, not independent CI execution.
+
+**Dependency scope:** `requirements.txt` specifies supported version ranges rather than a locked environment. Its pandas upper bound was raised from `<3` to `<4` to permit the locally verified pandas 3.0.1 version. One verified environment does not establish compatibility with every permitted package combination.

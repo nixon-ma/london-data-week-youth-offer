@@ -85,6 +85,23 @@ def main() -> None:
     rate_errors_e4 = explanatory_diagnostics.calculate_rate_errors(explanatory_table, result_e4, X_e4)
     print(rate_errors_e4)
 
+    # Export existing in-sample diagnostics; no additional model fitting.
+    fit_metrics = pd.DataFrame(
+        [
+            {"model": model, **errors}
+            for model, errors in (
+                ("E1", rate_errors_e1),
+                ("E2", rate_errors_e2),
+                ("E3", rate_errors_e3),
+                ("E4", rate_errors_e4),
+            )
+        ]
+    )
+    fit_metrics_path = Path("outputs/explanatory/e1_e4_fit_metrics.csv")
+    fit_metrics_path.parent.mkdir(parents=True, exist_ok=True)
+    fit_metrics.to_csv(fit_metrics_path, index=False)
+    print(f"E1–E4 in-sample fit metrics saved to {fit_metrics_path}")
+
     pearson_residuals_e4 = explanatory_diagnostics.calculate_pearson_residuals(explanatory_table, result_e4, X_e4)
     qa.assert_explanatory_pearson_residuals(
         result_e4, pearson_residuals_e4
