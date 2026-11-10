@@ -103,20 +103,20 @@ Secondary comparisons also show variation: male versus female rates were **7.47%
 
 ## 5. Accounting for changes in the London rate
 
-The subgroup gaps establish who experienced higher adverse rates, but not how much changes in group sizes contributed to London's overall trend. The rate can change because the **share of pupils in each group** changes, because the **adverse rate within each group** changes, or both. A symmetric decomposition separates these contributions for the FSM and identified-SEN partitions, using exact pupil counts.
+The subgroup gaps establish who experienced higher adverse rates, but not how much changes in group sizes contributed to London's overall trend. The rate can change because the **share of pupils in each group** changes, because the **adverse rate within each group** changes, or both. A symmetric decomposition separates these contributions for two group splits—FSM eligibility and identified SEN—using exact pupil counts.
 
-| Comparison | Partition | Changing group shares (pp) | Changing within-group rates (pp) | Total change (pp) |
+| Comparison | Group split | Changing group shares (pp) | Changing within-group rates (pp) | Total change (pp) |
 | --- | --- | ---: | ---: | ---: |
-| 2016/17 → 2022/23 | FSM | +0.480 | +0.139 | +0.619 |
-| 2016/17 → 2022/23 | SEN | +0.170 | +0.448 | +0.619 |
-| Early → recent pooled cohorts¹ | FSM | +0.441 | −0.108 | +0.332 |
-| Early → recent pooled cohorts¹ | SEN | +0.117 | +0.215 | +0.332 |
-| 2021/22 → 2022/23 | FSM | +0.106 | +0.591 | +0.697 |
-| 2021/22 → 2022/23 | SEN | +0.029 | +0.667 | +0.697 |
+| 2016/17 → 2022/23 | FSM eligible / not known eligible | +0.480 | +0.139 | +0.619 |
+| 2016/17 → 2022/23 | Identified SEN / no identified SEN | +0.170 | +0.448 | +0.619 |
+| Early → recent pooled cohorts¹ | FSM eligible / not known eligible | +0.441 | −0.108 | +0.332 |
+| Early → recent pooled cohorts¹ | Identified SEN / no identified SEN | +0.117 | +0.215 | +0.332 |
+| 2021/22 → 2022/23 | FSM eligible / not known eligible | +0.106 | +0.591 | +0.697 |
+| 2021/22 → 2022/23 | Identified SEN / no identified SEN | +0.029 | +0.667 | +0.697 |
 
 ¹ Early = 2016/17–2018/19; recent = 2021/22–2022/23. Both windows are pooled by pupil counts and exclude the intervening 2019/20–2020/21 cohorts.
 
-In the full-period comparison, composition contributed more under FSM, while within-group changes contributed more under SEN. The pooled FSM within-group contribution was slightly negative; **within-group terms dominated the latest annual rise under both partitions**. Of the recent SEN within-group contribution, **+0.614 pp** came from pupils *without* identified SEN. These results depend on the years compared and each partition. Each partition reconstructs the same observed change (**subject to displayed rounding**) and their contributions **must not be added**.
+In the full-period comparison, changing group shares contributed more under the FSM split, while changes in within-group rates contributed more under the SEN split. The pooled FSM within-group contribution was slightly negative; **within-group terms dominated the latest annual rise under both splits**. Of the **+0.667 pp** recent within-group contribution under the SEN split, **+0.614 pp** came from pupils *without* identified SEN. These results depend on the years compared and the group split. **Within each split, contributions from changing group shares and within-group rates sum to the observed change (subject to rounding); contributions must not be added across splits.**
 
 These are **accounting terms, not causal explanations**. FSM and SEN classifications and the composition of successive cohorts can change; within-group rates do not track the same individuals. The [decomposition method, reconciliations and sensitivity results](DATA_AUDIT.md#306-d11c--production-reconciliation-and-historical-change-findings-6-november-2026) are documented separately from E4's borough-level composition associations.
 
