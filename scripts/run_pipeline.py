@@ -1,11 +1,15 @@
 from pathlib import Path
 import sys
 
+import matplotlib
 import pandas as pd
 
 # This executable lives in scripts/; reusable modules remain in src/youth_offer/.
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
+
+# Select a noninteractive backend before importing plotting modules.
+matplotlib.use("Agg")
 
 from youth_offer import data, model_tables, baselines, predictive, evaluation, explanatory, explanatory_diagnostics, explanatory_plots, qa
 from youth_offer.predictive import DEVELOPMENT_TARGET_YEARS

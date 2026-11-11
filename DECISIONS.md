@@ -958,7 +958,7 @@ Any such reopening must be documented before 2022/23 predictive performance is c
 
 ---
 
-# D9c — Development Performance Evaluation
+# D9c — Development performance evaluation
 
 **Status:** Accepted; D9c implementation and QA completed.
 
@@ -977,17 +977,17 @@ Any such reopening must be documented before 2022/23 predictive performance is c
 
 The results do not demonstrate that FSM/SEN add or lack incremental predictive value *conditional on B3*, because B3 and M1 use different information sets. No score-driven tuning, model selection or replacement is permitted. The current series is retrospective and harmonised, not point-in-time operational forecasts. The adverse outcome is **not** a direct NEET measure.
 
-**Validation:** Common keys and merged source values were checked; 16 year–method records and four method summaries were independently recalculated and validated; two-cohort known-answer synthetic and deliberate-corruption tests passed. No 2022/23 predictive target was constructed, scored or inspected in D9c. That final evaluation remains locked until the pre-final audit and formal release of the evaluation boundary.
+**Validation:** Common keys and merged source values were checked; 16 year–method records and four method summaries were independently recalculated and validated; two-cohort known-answer synthetic and deliberate-corruption tests passed. No 2022/23 predictive target was constructed, scored or inspected in D9c. The final evaluation was still locked at this D9c checkpoint; its eventual authorised release is recorded under D9g.
 
 ---
 
-# D9d — Explanatory GLM implementation and numerical QA checkpoint
+# D9d — Explanatory GLM specification and numerical verification
 
-**Status:** E1–E4 fitting and structural/numerical QA implemented and locally verified; subsequent first-pass fit comparisons and diagnostics are recorded under D9d2. The original checkpoint is **not** completion of explanatory inference.
+**D9d evidence:** E1–E4 fitting and structural/numerical checks were completed locally. Residual and influence diagnostics followed under D9d2, with explanatory inference and robustness reported separately under D9e.
 
 **Evidence:** `DATA_AUDIT.md` §23; `src/youth_offer/explanatory.py`, `src/youth_offer/qa.py`, `scripts/run_pipeline.py` and `tests/test_explanatory.py`.
 
-**Implementation:** Retain the frozen D9a1–D9a5 grouped-binomial logit specifications on the 224 borough × cohort records (32 boroughs × seven cohorts, 2016/17–2022/23):
+**Implemented specification:** The D9a1–D9a5 grouped-binomial logit models were fitted to the 224 borough × cohort records (32 boroughs × seven cohorts, 2016/17–2022/23):
 
 - **E1:** categorical cohort-year effects (2016/17 reference; seven coefficients including intercept);
 - **E2:** borough fixed effects (lowest sorted borough code as reference; 32 coefficients);
@@ -996,14 +996,14 @@ The results do not demonstrate that FSM/SEN add or lack incremental predictive v
 
 **Verification:** All four fits converged and passed dimension, degrees-of-freedom, full-rank and independent numerical QA. E1/E2 fitted rates match independently pooled counts; E3 borough and year fitted-count margins match observed margins; E4 satisfies all 41 grouped-binomial score equations to numerical tolerance. The permanent synthetic `unittest` module covers specification/row alignment, these identities, corrupted-count rejection and rank-deficiency rejection. See §23 for measured discrepancies, dispersion diagnostics and reproducibility commands.
 
-**Interpretation and scope:** These checks establish implementation consistency, not substantive effects, causal relationships or valid naive-binomial standard errors. D9d2 records the subsequent fit and residual/influence diagnostics. Borough-block-bootstrap inference, clustered-covariance cross-check, predeclared robustness and probability-scale reporting remain outstanding. Do not select or drop E4 composition variables based on initial dispersion or significance.
+**Interpretation and scope:** These checks establish implementation consistency, not substantive effects, causal relationships or valid naive-binomial standard errors. The fit and residual/influence diagnostics followed under D9d2; subsequent borough-bootstrap inference, clustered-covariance checks, robustness and probability-scale reporting are documented under D9e. E4 composition variables were not selected or removed on the basis of initial dispersion or significance.
 
-**Predictive boundary:** Including 2022/23 in the seven-cohort *explanatory* fits is permitted. The separate 2022/23 *predictive* evaluation remains locked, with no final-year predictive performance calculated or inspected. Code/documentation commit status is not implied by this checkpoint.
+**Predictive boundary at D9d:** The seven-cohort explanatory fits included 2022/23, but the separate 2022/23 predictive evaluation was neither constructed nor inspected at this stage. The historical-only preflight and subsequent authorised final scoring are documented under D9f–D9g.
 
 
-## D9d2 — Fit comparisons and first-pass residual/influence checkpoint
+## D9d2 — Fit comparisons, residuals and influence diagnostics
 
-**Status:** Descriptive explanatory fit comparisons, residual/temporal screening, influence screening and corresponding QA completed and locally verified. **Explanatory uncertainty, substantive effects and predeclared robustness remain pending.**
+**Scope:** This stage assessed descriptive fit, residual and temporal structure, influence and numerical consistency. Inferential intervals and predeclared robustness analyses are documented under D9e.
 
 **Evidence:** `DATA_AUDIT.md` §23.5; `src/youth_offer/explanatory_diagnostics.py`, `src/youth_offer/explanatory_plots.py`, `src/youth_offer/qa.py`, `tests/test_explanatory_diagnostics.py` and `scripts/run_pipeline.py`.
 
@@ -1011,13 +1011,13 @@ The results do not demonstrate that FSM/SEN add or lack incremental predictive v
 
 **Decision:** Retain the frozen E1–E4 mean structures and D8/D9a validation plan unchanged. Borough/year effects substantially improve explanatory in-sample fit; composition has a modest incremental fit effect after both FE sets. The comparisons do not quantify causal contributions, unique explained-variance shares, coefficient significance or forecasting advantage. Do not drop the composition block, alter the mean specification or exclude borough-years on the basis of these diagnostics. Extra-binomial dispersion, potential within-borough dependence and influential observations remain live concerns, despite no obvious major fitted-probability/denominator residual pattern.
 
-**Next:** Predefine common interpretable probability-scale estimands/contrasts; use the D9a4 whole-borough trajectory bootstrap (approximately 2,000 refits subject to stability), borough-clustered covariance cross-check and full D9a6 robustness set, especially whole-borough and whole-cohort deletion checks. Seven common cohort-year regimes remain a hard inference limitation.
+**Subsequent inference (D9e):** The predeclared probability-scale contrasts, whole-borough trajectory bootstrap, clustered-covariance cross-check and six robustness families were subsequently completed. Seven common cohort-year regimes remain a central inference limitation.
 
-**Boundary:** 2022/23 is included in explanatory fitting and diagnostics only; its **predictive** final evaluation remains locked. Tests and pipeline were reported passing locally, not independently executed on the remote repository.
+**Predictive boundary at D9d2:** The 2022/23 outcomes entered explanatory fitting and diagnostics, not predictive scoring. Local diagnostic tests and pipeline execution were reported as successful, without an independent end-to-end reproduction. The predictive evaluation was released subsequently under D9g.
 
 ---
 
-# D9e — Probability-scale explanatory estimands and inference plan
+# D9e — Probability-scale explanatory estimands and inference
 
 **Status:** Accepted methodology **implemented and verified at the exported-results level** (31 October 2026). D9e1–D9e4 were run locally; the supplied numerical exports have been audited independently. The original estimands and model specification remain frozen; detailed results, robustness and limitations are in D9e5 and `DATA_AUDIT.md` §24.6–§24.10.
 
@@ -1061,9 +1061,9 @@ For group deletion, compare full and reduced fits on a **common retained referen
 
 Report D9d structural-fit evidence separately from these E4 associations. The primary outcome remains **not in a recorded sustained destination**, including activity not captured—not a direct NEET rate. Neither D9e nor the explanatory inclusion of 2022/23 releases the **locked 2022/23 predictive evaluation**. Optional adjusted **borough** summaries require a separate, common year/composition reference specification before reporting; D9e1's shared-year profiles do not automatically define that borough-ranking estimand.
 
-## D9e5 — Completed explanatory implementation and empirical checkpoint (31 October 2026)
+## D9e5 — Explanatory results, sensitivity and verification (31 October 2026)
 
-**Status and evidence:** D9e1–D9e4 were integrated into the locally executed explanatory pipeline. The author supplied its nine `outputs/explanatory/d9e/` exports for an independent **export-level** review; the raw-data pipeline was **not rerun independently in this review**. The original D9a/E4 mean structures and frozen D9e estimands were retained. The exports contain all **22** predeclared quantities (seven rates, six 2016/17 contrasts, six adjacent-year contrasts, three composition associations), complete bootstrap replicates and all six robustness families. See `DATA_AUDIT.md` §24.6–§24.10 for tables, numerical checks, filenames and limitations. Earlier D9d statements about inference being pending record the historical D9d checkpoint, not the current status.
+**Status and evidence:** D9e1–D9e4 were integrated into the locally executed explanatory pipeline. Nine `outputs/explanatory/d9e/` exports underwent independent **export-level** review, not an independent raw-data pipeline rerun. The original D9a/E4 mean structures and frozen D9e estimands were retained. The exports contain all **22** predeclared quantities (seven rates, six 2016/17 contrasts, six adjacent-year contrasts, three composition associations), complete bootstrap replicates and all six robustness families. See `DATA_AUDIT.md` §24.6–§24.10 for tables, numerical checks, filenames and limitations. Earlier D9d statements about inference being pending record the historical D9d checkpoint, not the current status.
 
 **Primary borough-bootstrap inference:** **2,000 attempted / 2,000 successful / zero failed** complete-trajectory resamples (seed `20261030`; 32 boroughs and seven years; 224 original profiles). Report 95% *percentile* intervals from paired replicate contrasts, allowing the empirical reference profiles to vary with each resample. Borough-clustered/delta intervals with finite-cluster adjustment are a secondary cross-check, not proof of independent common-year shocks.
 
@@ -1073,7 +1073,7 @@ Report D9d structural-fit evidence separately from these E4 associations. The pr
 
 **Frozen robustness decision:** All **43 alternative fits** (six prescribed families; **947** case/estimand output rows) were run. The endpoint remains positive under equal-weight OLS (**+0.475 pp**), the disadvantage-proxy alternative (**+0.991 pp**), every leave-one-borough-out case (**+0.501 to +0.651 pp**), each of five estimable leave-one-cohort-out cases (**+0.337 to +0.634 pp**), and joint 2019/20–2020/21 exclusion (**+0.537 pp**). **However, the predeclared linear cohort-trend model reverses its sign (−0.331 pp).** Therefore, the endpoint conclusion is **sensitive to temporal specification** and must not be described as universally robust. When omitting 2016/17 or 2022/23, the endpoint contrast is **not estimable**; no missing-year effects were extrapolated. The alternative disadvantage association is not the same FSM estimand. Robustness comparisons are point-estimate sensitivity checks, **not additional interval-based tests**.
 
-**Interpretive decision:** Preserve the frozen E4 mean model and report the observed nonlinear historical pattern with the above qualification; do not selectively adopt the model with the most favourable result. No causal, pupil-level, prediction, direct-NEET, multiple-testing-adjusted significance or future-regime uncertainty claim is supported. These borough-resampling intervals do not resolve seven shared cohort-year regimes, unobserved common shocks, finite-cluster limitations or the fact that all 32 London boroughs are included. The **2022/23 predictive final evaluation remains locked**; next is the separate predictive pre-final audit, not the final evaluation.
+**Interpretive decision:** Preserve the frozen E4 mean model and report the observed nonlinear historical pattern with the above qualification; do not selectively adopt the model with the most favourable result. No causal, pupil-level, prediction, direct-NEET, multiple-testing-adjusted significance or future-regime uncertainty claim is supported. These borough-resampling intervals do not resolve seven shared cohort-year regimes, unobserved common shocks, finite-cluster limitations or the fact that all 32 London boroughs are included. At this D9e stage the separate 2022/23 predictive evaluation remained locked; D9f–D9g document its subsequent release process.
 
 ---
 
@@ -1087,38 +1087,38 @@ These are not yet accepted decisions.
 
 ---
 
-## Working rule
+## Research sequence
 
-Proceed in the order:
+The analytical sequence was:
 
 **problem understanding → raw-data understanding → population/outcome decisions → data-quality audit → EDA → modelling question → validation design → implementation → final audit**
 
-**Current checkpoint (superseding this historical pre-final instruction):** D1–D9g modelling and evaluation are complete. The 2022/23 predictive final target was separately authorised, scored and reproduced under D9g. The remaining work is publication presentation and verification, without refitting or retuning.
+**Research status:** D1–D9g modelling and evaluation were completed, followed by publication figures and the D11 descriptive and policy synthesis. The 2022/23 predictive evaluation was released only after the historical-only preflight. The accepted specifications and one-time final scores were not retuned.
 
 ---
 
-# D9f — Predictive pre-final execution gate (implemented and locally verified, 2 November 2026)
+# D9f — Predictive evaluation safeguards and historical-only preflight (2 November 2026)
 
-**Status:** Published on `d9-implementation` in commit `0df00f19cc1b94248cf972de9f6c7bc592bcde45`. User reports the full local test suite and default historical-only preflight passed. Read-only GitHub review confirms the five intended changed files; the final evaluation remains **locked** pending separate explicit authorisation.
+**Pre-release checks:** The final-evaluation gate was integrated and the historical-only preflight and full local test suite were reported as passing. No independent CI execution was recorded. The 2022/23 target remained unscored until the authorised D9g evaluation.
 
 **Scope:** This is an **engineering release safeguard**, not a change to the accepted D8/D9a predictive estimand, features, B1–B3, M1, no-tuning rule, metrics, validation years or interpretation restrictions. D9c development results and D9e explanatory findings remain unchanged.
 
-**Release design:** A separate `src/run_final_predictive.py` entry point operates in two deliberately distinct modes:
+**Release design:** A separate `scripts/run_final_predictive.py` entry point operates in two deliberately distinct modes:
 
 1. **Default (locked):** Retain only raw cohorts 2016/17–2021/22 **before** constructing the outcome table; construct the five previously permitted one-cohort transition targets (160 rows), all 32 origin-2021/22 predictor rows, historical B1–B3 forecasts and an unscored M1 forecast. Run historical source/feature/alignment/baseline/model QA. Write only `outputs/predictive_final_gate/historical_preflight.json`: counts, full design-matrix rank, finite values, and out-of-range forecast counts. No 2022/23 target is constructed, joined, scored or exported.
 2. **Explicitly authorised release only:** The CLI flag `--release-202223-predictive-evaluation` allows a separately named function to construct the 2022/23 headline target, verify all 32 keys and exact accounting, join it to **unchanged** historical-origin forecasts, and calculate exactly the predeclared MAE, RMSE, weighted-MAE and B1-relative difference for B1–B3/M1. This path is never invoked by default or by the historical-only development pipeline. Its results must be reported regardless of whether M1 wins.
 
-**Required verification before releasing:** Apply the patch locally with `git apply --check`; run all tests, including `tests/test_final_gate.py`; run only `python src/run_final_predictive.py` without the release flag; confirm 160 training transitions, 32 forecast boroughs, rank four, all fitted values finite, zero materially invalid probabilities and **no scored final files**. If any hard diagnostic fails, keep the holdout locked and investigate the objective failure. After reviewing that evidence, require a separate explicit user decision to release the final evaluation. Do not use final observed outcomes to alter model choices or engineering rules.
+**Pre-release validation criteria:** The historical-only entry point had to retain 160 training transitions, 32 forecast boroughs, full design-matrix rank (four), finite fitted values, no materially invalid probabilities and no final scored files. The full test suite and `tests/test_final_gate.py` were required to pass. Any failure would have prevented the one-time final release; final outcomes could not be used to revise the frozen model or benchmarks.
 
 **Caveat:** The preflight can check numerical and temporal preparation, but cannot prove model superiority or operational historical forecast availability; the historical publication-vintage limitation and small number of annual regimes remain as accepted.
 
-**Post-push verification checkpoint:** Local preflight evidence as reported by the user confirms completion of the required historical-only checks; the earlier isolated-mirror evidence recorded in `DATA_AUDIT.md` remains separately labelled. No final-year predictive performance was released in this checkpoint. Preserve the frozen D8/D9a comparison and require an explicit release decision before invoking the scoring flag.
+**Verification boundary:** The local historical-only checks were reported as passing, distinct from the earlier isolated-module checks documented in `DATA_AUDIT.md`. These checks did not construct or score 2022/23 targets. The final cohort was evaluated subsequently under the unchanged D9g protocol.
 
 ---
 
 # D9g — Authorised 2022/23 final predictive evaluation (2 November 2026)
 
-**Status:** Completed; final-evaluation boundary explicitly released by the user after D9f local test/preflight verification. This D9g checkpoint supersedes D9f's historical *locked* status; it does not revise the previously accepted D8/D9a design or the D9e explanatory findings.
+**Status:** The final evaluation was released after D9f historical-only preflight and local test verification. D9g superseded the earlier predictive lock without changing the D8/D9a evaluation design or D9e explanatory findings.
 
 **Frozen protocol followed:** Use the five historical borough transitions (160 rows; training targets through 2021/22) to fit M1; produce B1–B3 and M1 forecasts from 2021/22-or-earlier information; join to the single held-out 2022/23 borough target only upon release; report all four methods on the same 32 boroughs. No tuning, model replacement, feature revision, clipping or result-driven selection. The predeclared metrics are borough-unweighted MAE (primary), RMSE (secondary), and target-cohort-weighted MAE (sensitivity), all in percentage points, plus MAE minus B1.
 
@@ -1131,7 +1131,7 @@ Proceed in the order:
 
 # D10 — Results presentation and publication scope (2 November 2026)
 
-**Status:** Accepted for implementation after closure of D9g. This is presentation and reproducibility work only; D1–D9g methods, inferential interpretations and all final scores remain frozen.
+**Scope:** D10 addressed presentation and reproducibility after the D9g evaluation. It did not change D1–D9g methods, inferential interpretations or final scores.
 
 **Original five core figures (retained):** (1) London-wide two-component adverse-rate series; (2) 2022/23 borough rates versus exact adverse counts; (3) disclosure-aware disadvantage, overlapping FSM, identified SEN and sex comparisons; (4) E4 probability-scale year contrasts with borough-bootstrap intervals plus separately labelled linear-trend point sensitivity; (5) B1–B3/M1 chronological development versus authorised 2022/23 final MAE. Prior E4 residual plots remain supplementary diagnostics, not headline policy findings.
 
@@ -1139,34 +1139,34 @@ Proceed in the order:
 
 **Implementation boundary:** `scripts/build_publication_figures.py` is an additive, read-only plotting layer consuming the frozen source tables/exports; it never modifies the estimation pipeline. `docs/figures/` tracks presentation SVGs while raw and intermediate data remain excluded. README carries the public summary; existing decision and audit logs retain methodological details.
 
-**Verification boundary:** Initial SVG previews were locally rendered from the supplied raw ZIP and documentation-grounded D9e/D9g summary fixtures, using a local representative data/model-tables module. Full final figures 4–5 must be regenerated from the actual GitHub pipeline's CSV exports on the user's checkout. Before publication, the author must verify `git apply --check`, the test suite, figure regeneration, numeric consistency, links and data attribution. Review and patch preparation did not modify GitHub.
+**Figure verification:** Initial previews used the source ZIP and reference fixtures, not the final production exports. Production figures were subsequently regenerated from the frozen calculation outputs, with numeric consistency and local test checks documented in `DATA_AUDIT.md` §§29–31. The distinction between preliminary fixture previews and production evidence is retained.
 
-**D10 presentation extension (3 November 2026):** Add one new **headline E1–E4 structure and E4 composition-association figure**, and one **supplementary 32-borough × seven-cohort observed adverse-rate heatmap**. The resulting presentation contains six core figures and one supplementary figure. Figure 6 uses the audited D9d in-sample MAEs alongside the three frozen D9e composition estimates and their whole-borough bootstrap intervals. The heatmap uses exact headline counts and cohort denominators, orders boroughs by their observed seven-cohort mean, and reports the documented 27/32 latest-year rise and approximately 0.68 endpoint rank correlation; it does not introduce adjusted borough rankings. The README adds policy questions for further investigation and states that B3 beat M1 on absolute error in only 18/32 final-year boroughs. No new models, tests of significance, causal claims or changes to D1–D9g are introduced. Regenerate Figures 4–6 from the full existing production exports before publication, then verify tests and file integrity locally.
+**D10 publication figures (3 November 2026):** D10 added a **headline E1–E4 fit and E4 composition-association figure** and a **supplementary 32-borough × seven-cohort observed adverse-rate heatmap**, bringing its publication set to six headline figures and one supplementary figure. Figure 6 displays pipeline-exported E1–E4 in-sample MAEs alongside the three frozen D9e composition associations and their whole-borough bootstrap intervals. The heatmap uses exact headline counts and denominators, orders boroughs by their seven-cohort observed mean, and reports the 27/32 latest-year rise and approximately 0.68 endpoint rank correlation; it is not an adjusted borough ranking. The README identifies further policy questions and reports that B3 outperformed M1 on absolute error in only 18/32 final-year boroughs. No model, significance test, causal interpretation or D1–D9g result was changed. The later production-figure regeneration and verification evidence are recorded in `DATA_AUDIT.md` §§29–31.
 
-**Post-application D10 checkpoint (3 November 2026):** The author reports that both publication patches applied, the full local test suite passed, all seven figures regenerated, and `git diff --check` passed. This is user-reported verification on the local checkout, not independently witnessed CI. D1–D9g are unchanged. Final checks before publishing are the staged-file inventory, actual regenerated SVGs and rendered README on GitHub.
+**D10 local validation (3 November 2026):** The full test suite, seven-figure regeneration and whitespace checks were reported as passing after the initial publication-figure changes. These are reported local execution checks, not an independent CI run; the D1–D9g estimates and methods remained unchanged.
 
-**D10 code-organisation decision (3 November 2026; presentation/reproducibility only):** Keep `src/youth_offer/` for reusable modules and place both executable runners with the existing utilities in `scripts/`. Update the runners' import resolution, the direct import in `tests/test_final_gate.py`, active README commands, and the development diagnostic script's usage example. Retain `docs/figures/` as committed public assets, `outputs/` as git-ignored intermediate evidence, and `data/raw/` as local source input. This refactor makes no changes to model specifications, frozen results, source tables, output formats, or the D9g evaluation protocol. Validate locally after applying; historical paths in dated checkpoints describe the paths used at those checkpoints.
+**D10 code organisation (3 November 2026):** Reusable modules remained under `src/youth_offer/`, while the executable runners were moved to `scripts/` alongside the existing utilities. Runner imports, `tests/test_final_gate.py`, README commands and the diagnostic script's usage example were updated accordingly. Publication SVGs remain in `docs/figures/`; intermediate `outputs/` and local `data/raw/` are excluded from version control. This path-only refactor did not alter model specifications, source tables, output formats, frozen scores or the D9g evaluation protocol. Earlier dated checkpoints may refer to the former runner paths.
 
-**Post-commit D10 checkpoint (3 November 2026):** Read-only GitHub inspection confirms commit `142b955d53ca0c1b7ed6dfaa119ea3d1f8c15d2d` on `d9-implementation`, with the executable runners in `scripts/`, seven committed SVGs and updated reproduction instructions. The author also reports full local test, pipeline, final-result and figure regeneration checks passing. This is not an independently witnessed CI run; the branch remains private and unmerged. Earlier D10 proposal-stage limitations remain as dated checkpoints.
+**D10 verification (3 November 2026):** Local tests, pipeline execution, final-score reproduction and regeneration of seven SVGs were reported as successful after the runner relocation. No independent CI execution was recorded; modelling and evaluation were unchanged.
 
 ---
 
-# D11 — Youth Offer evidence-to-decision extension (scope agreed 4 November 2026; implementation pending)
+# D11 — Youth Offer evidence-to-decision extension (scope defined 4 November 2026; subsequently completed through D11d)
 
-**Status and boundary:** D11a–D11d are accepted as the next analytical scope; D11e is an optional, separately audited recency check. No D11 empirical results, figures, constituent models or intervention effects are yet verified or accepted. Preserve D1–D10 specifications, tests, results and the released D9g evaluation unchanged.
+**Original scope and boundary:** D11a–D11d were accepted as descriptive and policy-analysis extensions; D11e remained a separate optional recency check. At this scoping stage the new analyses had not yet been implemented. Their subsequent methods and results are documented below and in `DATA_AUDIT.md` §30. D1–D10 specifications and the released D9g results remained unchanged.
 
 **Policy question:** How can observed KS4 destination patterns inform *where and for whom to investigate* additional Youth Offer support, without claiming to identify which intervention would help the most young people?
 
 **Policy-to-data boundary:** The organiser's challenge concerns young Londoners outside education, employment or training, including barriers linked to ethnicity, disability and health. This dataset instead follows a narrower KS4 school-leaver population: its adverse outcome includes *activity not captured*, is **not NEET**, and its borough is school/institution location rather than residence. Identified SEN does not measure all disability or health-related barriers. The data contain no identified intervention, individual service eligibility, uptake, delivery cost or causal treatment effect. Frame D11 as evidence for *investigation*, not a current all-youth allocation plan or a claim to maximise additional successful outcomes.
 
-**Agreed publication storyline (logical presentation order, not coding chronology):**
+**Reporting structure:**
 1. **Overall problem (D1–D6):** Define the school-location population and non-NEET adverse outcome; show London trends, counts and borough variation. **Before E4, briefly establish the already observed disadvantage/FSM and identified-SEN disparities** (D6), so that the composition variables have an evidence-based motivation. Reserve detailed subgroup burden, persistence and destination pathways for D11.
 2. **Aggregate historical structure and forecast value (D7–D9):** First, E1–E4 estimates conditional historical associations among borough, cohort-year and aggregate composition; report their diagnostics and robustness limits. Separately, B1–B3/M1 tests whether a learned *retrospective* borough forecast improves on simple historical baselines. Neither constitutes causal explanation or an operational support-allocation system.
 3. **Beneath the aggregate outcome (D11a–D11b):** Examine five mutually exclusive recorded destination categories, then identify which boroughs and pupil groups account for substantial, elevated and persistent adverse outcomes.
 4. **Accounting for historical changes (D11c):** Separate changes in subgroup proportions from changes in within-group adverse rates. This is an accounting identity, not a causal mechanism.
 5. **Youth Offer implications (D11d; D11e if feasible):** Synthesise investigation priorities, plausible support hypotheses, missing data, pilot evaluation and a separately audited newer-vintage descriptive check.
 
-**Why the stages follow (publication bridges A–C; no new empirical findings):**
+**Analytical links between sections:**
 - **A — Overall descriptive evidence → E1–E4:** The observed non-linear common-year movement, persistent-but-changing borough differences and descriptive subgroup disparities raise a narrower question: how much aggregate borough–cohort variation is associated with borough identity, cohort year and *borough-level subgroup composition*? E1–E4 investigate this conditional structure. E4's composition coefficients are **not** estimates of the difference between an FSM/SEN pupil and a non-FSM/non-SEN pupil, nor causes of disparity.
 - **B — Explanatory → predictive:** An explanatory fit to observed borough–cohort rates does not show whether outcomes in later cohorts can be anticipated. The distinct B1–B3/M1 track evaluates that *retrospective chronological prediction* question against simple benchmarks. Preserve the frozen finding that learned M1 did not improve on B1 in the single final-year primary MAE, while B3 performed best in that one cohort; avoid claims of future or operational forecasting superiority.
 - **C — Aggregate evidence → D11:** D6 already establishes broad descriptive subgroup disparities; however, aggregate E1–E4 associations and borough forecasts cannot quantify detailed subgroup/borough burden and stability, distinguish full recorded pathways, or identify intervention effects. D11 deepens the descriptive evidence rather than claiming the aggregate models validate targeting. Keep **E4 borough-composition associations**, **within-group adverse rates** and **subgroup accounting decomposition** conceptually separate: they estimate different quantities. Observed need must remain distinct from achievable causal improvement.
@@ -1183,11 +1183,11 @@ Proceed in the order:
 
 **D11e — Recency, separate gate:** If using a newer DfE vintage, first audit definitions, coverage, release timing, revisions and subgroup comparability. Compare selected descriptive results separately; never silently append it to or refit the frozen D1–D9g series. Without this (and current operational service data), label findings **historical investigation leads**, not present-tense allocations.
 
-**Implementation and presentation discipline:** Inspect and specify one shared, disclosure-aware destination/subgroup data layer before writing new analyses; check uniqueness, reconciliation, hierarchy, suppression and denominators with focused tests. Aim for at most two additional principal figures (destination pathways; borough/subgroup need and persistence), plus a compact decomposition table and an evidence-to-action table. Finalise exact display choices from inspected results. Do not update the public-facing README as though D11 were completed before it is implemented and verified.
+**Data and reporting design:** D11 used a shared, disclosure-aware destination/subgroup layer with checks for uniqueness, accounting reconciliation, category hierarchy, suppression and denominators. The additional outputs include destination-pathway and borough/subgroup figures, a compact historical-change decomposition and an evidence-to-action table. Reporting followed verified calculations rather than anticipating uncompleted results.
 
 ## D11a — Destination pathway analysis (5 November 2026)
 
-**Status:** Method approved and implementation prepared. Seven focused unit tests and a raw-data check passed in an isolated workspace; full integration tests on the repository checkout remain outstanding. D1–D10 are unchanged.
+**Initial D11a validation (5 November 2026):** Seven focused unit tests and a raw-data check passed in an isolated workspace, without establishing full repository integration. Subsequent integrated tests and source checks are recorded under D11a and in `DATA_AUDIT.md` §30.2.
 
 **Population and unit:** The main analysis covers the 32 London school-location boroughs, seven KS4 cohorts from 2016/17 to 2022/23, and the combined state-funded mainstream and special-school population in the 2023/24 DfE release. Each borough/cohort/group has one denominator and five exclusive pathways: sustained education, sustained employment, sustained apprenticeships, not recorded as sustained, and activity not captured. Their counts must reconstruct the cohort, the published sustained subtotal and the existing adverse outcome. Alternative provision and newer publication vintages remain separate.
 
@@ -1195,13 +1195,13 @@ Proceed in the order:
 
 **Subgroups and disclosure:** Produce exact-count tables for FSM, identified SEN versus no identified SEN, sex and all six major-ethnicity categories. Keep `Unknown` ethnicity for accounting without substantive interpretation. The SEN support/EHC comparison is nested within identified SEN. Subgroup families overlap and must not be added together. FSM and top-level SEN lead the pathway comparisons; sex and major ethnicity remain available for secondary reporting. Disadvantage counts are disclosure-rounded: retain the published percentages and their suppression states, use approximate cohort weights only when every borough's percentage is available, and do not infer suppressed values or label rounded counts exact.
 
-**Verification and figures:** Require unique destination cells, complete cohort/geography/group coverage, constant denominators, five-way and subgroup-partition reconciliation, agreement with the frozen headline, publication-code checks and small-denominator disclosure. Figure 8 displays the three sustained pathways on clearly labelled separate scales; Figure 1 already shows both adverse components. Retain all five pathways in the descriptive tables. Do not add D11a completion claims to the README before checkout verification.
+**Verification and figures:** Require unique destination cells, complete cohort/geography/group coverage, constant denominators, five-way and subgroup-partition reconciliation, agreement with the frozen headline, publication-code checks and small-denominator disclosure. Figure 8 displays the three sustained pathways on clearly labelled separate scales; Figure 1 already shows both adverse components. Retain all five pathways in the descriptive tables. D11a completion was reported only after integration checks, as recorded below.
 
-## D11a — Publication and local verification checkpoint (5 November 2026)
+## D11a — Implementation and verification (5 November 2026)
 
-The completed destination-pathway implementation was published on `d9-implementation` in commit `d98e145b6cf251bc5c913e0ab0cb03e5a1d57891` (`Add destination pathway analysis and validation`). Read-only GitHub inspection confirms the new analysis, runner, nine focused tests, Figure 8 and additive QA and documentation changes; no D1–D10 code was changed. The repository maintainer reports successful execution of the full local test suite, destination-pathway runner and `git diff --check` after the coverage fix, QA relocation and formatting adjustments. These checks supersede the earlier D11a implementation-pending checkpoint; there is no independent CI evidence for that execution.
+**D11a implemented and checked:** The destination-pathway implementation added a reusable analysis module, runner, nine focused tests, Figure 8 and additive QA. The full local suite, pathway runner and whitespace checks were reported as passing after integration; no independent CI execution was recorded. Existing D1–D10 modelling code remained unchanged.
 
-## D11b — Historical need, subgroup gaps and persistence (method accepted 5 November 2026; implementation pending)
+## D11b — Historical need, subgroup gaps and persistence (method specified 5 November 2026)
 
 **Purpose and population:** Describe where recorded adverse outcomes are concentrated, how prevalent they are within pupil groups, and how consistently group differences appear across historical cohorts. The primary population remains state-funded mainstream and special-school KS4 leavers in the stable 32 London school-location boroughs, 2016/17–2022/23, from the frozen DfE 2023/24 release. No inference about pupils' residence, Youth Offer eligibility or intervention effects follows.
 
@@ -1222,9 +1222,9 @@ The completed destination-pathway implementation was published on `d9-implementa
 **Tables, figure and QA:** Produce borough/cohort/group counts and rates; the 2022/23 and two-year pooled burden/rate tables; three-year sensitivity; seven-year annual gaps and sign frequencies; separate sex/ethnicity and disclosure-aware disadvantage summaries; mainstream-only sensitivity; and London-level AP context. Figure 9 will show 2021/22–2022/23 pooled FSM and identified-SEN within-borough gaps in aligned panels, with the same neutral borough order, percentage-point scales and zero reference, rather than a policy targeting rank. Require unique keys, all expected 32 boroughs × seven cohorts, complete valid partitions, denominators counted once, exact group-to-headline reconciliation, correct pooled arithmetic, zero/negative-gap handling, disclosure-code/rounding safeguards, and AP population separation. Reuse the destination-pathway layer; retain all D1–D10 specifications, outputs and final predictive scores. Detailed composition/within-group historical-change decomposition remains D11c.
 
 
-## D11b — Local implementation and verification (6 November 2026)
+## D11b — Implementation and numerical verification (6 November 2026)
 
-**Status:** D11b was implemented on the local `d9-implementation` checkout. The repository maintainer reports a passing full test suite and successful regeneration of the production tables and Figure 9. The nine submitted CSVs and SVG were checked separately against their recorded calculations; selected totals and disclosure fields were also checked against the frozen source ZIP. This is an export-level verification, not an independent end-to-end pipeline run or CI result. At this checkpoint, GitHub still points to `db0253e35763fe7813638f2c45136a4b85e21d0c`; the implementation has not yet been published.
+**D11b verification:** The full test suite and production tables/Figure 9 were reported as passing locally. The nine CSV exports and figure were checked separately for calculation consistency, with selected totals and disclosure fields checked against the frozen ZIP. This establishes export-level validation, not an independently observed end-to-end pipeline or CI run.
 
 **Implemented method:** The D11b calculations reuse D11a's validated five-pathway extraction. Each annual borough/group record retains one cohort denominator and the exact sum of the two adverse destination counts. Multi-cohort rates use pooled counts and denominators. FSM/SEN gaps compare groups within the same borough and period; integer cross-products determine positive, zero and negative signs without rounding. Burden shares are calculated only within complete, disjoint subgroup partitions. Mainstream-only comparisons and London-level alternative provision (AP) remain separate from the primary combined population. Disadvantage rates use published sustained percentages and disclosure-rounded weights, and are labelled approximate.
 
@@ -1232,11 +1232,11 @@ The completed destination-pathway implementation was published on `d9-implementa
 
 **Outputs and scope:** Nine intermediate CSVs are retained under `outputs/destination_need/`. Figure 9 shows 2021/22–2022/23 pooled FSM/SEN gaps across 32 alphabetically ordered school-location boroughs on aligned percentage-point axes with a zero reference. Small-cell denominators and all annual gap magnitudes remain available in the tables. No targeting score, new model or causal claim was introduced. D1–D10, D11a, the released D9g evaluation and the separate D11c methodology remain unchanged; D11c implementation is pending.
 
-## D11b — Post-publication confirmation (6 November 2026)
+## D11b — Integration and source reconciliation (6 November 2026)
 
-Read-only GitHub inspection confirms publication of D11b on `d9-implementation` in commit `70ef86083954ba0f2924245609f7c64ad4975510` (`Implement D11b historical need and persistence analysis`). The commit changed the nine intended files: the two research logs, Figure 9, the destination-need runner, the pathway/need/QA modules and their two focused test files. Frozen D9g modelling code was unchanged. The full test suite passed locally according to the maintainer; the nine output CSVs and Figure 9 were separately reconciled against each other and selected frozen-source records. No independent end-to-end execution or CI result is claimed. Earlier publication-pending statements remain as dated checkpoints.
+**D11b verification record:** The destination-need runner, pathway/need/QA modules, focused tests and Figure 9 were integrated without changing the D9g modelling code. Local tests were reported passing; nine CSV outputs and the figure underwent separate source/export reconciliation. These checks did not establish an independent full-pipeline rerun or CI result.
 
-## D11c — Historical-change accounting (method accepted 6 November 2026; implementation pending)
+## D11c — Historical-change accounting (method specified 6 November 2026)
 
 **Purpose and population:** London's overall adverse rate is a pupil-weighted average of subgroup adverse rates. It can change because subgroup shares change, subgroup rates change, or both. D11c separates these contributions arithmetically for the frozen DfE 2023/24 release: seven KS4 cohorts (2016/17–2022/23), 32 London school-location boroughs, and the combined state-funded mainstream + special-school population. The adverse count remains `Not recorded as a sustained destination` plus `Activity not captured`. This is descriptive accounting, not causal attribution.
 
@@ -1258,7 +1258,7 @@ Starting from the initial overall rate, subgroup shares can be changed first and
 
 **Interpretation:** Composition describes changes in *recorded* subgroup proportions, not why they changed. FSM eligibility is administrative and its changing share should not be read simply as a change in deprivation. Within-group contributions compare different pupil cohorts, not the same pupils over time; changes in each group's membership, borough distribution and unmeasured circumstances may also affect its observed rate. Neither term is a causal effect or an estimate of achievable Youth Offer benefit. Keep D11c distinct from D11b subgroup gaps and the borough-level E4 composition associations.
 
-**Reporting and verification:** Report London pupil-weighted results in one six-row table (FSM and SEN across three comparisons), with composition, within-group and observed total changes in percentage points, displayed to three decimals. Retain group-level counts, shares, rates and contributions in no more than one machine-readable output. Do not add a public figure or borough ranking; borough-specific components do not generally sum to the London decomposition when borough population weights change. Do not report composition as a percentage of the total change because offsetting terms make such percentages unstable. Verify unique keys, complete periods and groups, exact partition-to-headline totals (cohorts and both adverse components), positive denominators and the identity against independently calculated overall rates to `1e-10` pp for every comparison and partition. Use numeric exact counts, not published rounded percentages; a `low` percentage token does not invalidate an accompanying exact count. Include synthetic tests for composition-only, rate-only, simultaneous, offsetting, zero-change and reversed-endpoint cases, and rejection tests for missing or duplicated cells. Record small denominators if borough diagnostics are examined. No inference, new model or changes to D9g/D11a/D11b functionality are authorised. D11c results remain pending implementation and verification.
+**Reporting and verification:** Report London pupil-weighted results in one six-row table (FSM and SEN across three comparisons), with composition, within-group and observed total changes in percentage points, displayed to three decimals. Retain group-level counts, shares, rates and contributions in no more than one machine-readable output. Do not add a public figure or borough ranking; borough-specific components do not generally sum to the London decomposition when borough population weights change. Do not report composition as a percentage of the total change because offsetting terms make such percentages unstable. Verify unique keys, complete periods and groups, exact partition-to-headline totals (cohorts and both adverse components), positive denominators and the identity against independently calculated overall rates to `1e-10` pp for every comparison and partition. Use numeric exact counts, not published rounded percentages; a `low` percentage token does not invalidate an accompanying exact count. Include synthetic tests for composition-only, rate-only, simultaneous, offsetting, zero-change and reversed-endpoint cases, and rejection tests for missing or duplicated cells. Record small denominators if borough diagnostics are examined. No inference, new model or changes to D9g/D11a/D11b functionality are authorised. Subsequent implementation results and verification evidence are recorded in D11c and `DATA_AUDIT.md` §30.6.
 
 ## D11c — Implementation and production findings (6 November 2026)
 
@@ -1277,7 +1277,7 @@ Starting from the initial overall rate, subgroup shares can be changed first and
 
 **Findings:** Over the full period, changes in recorded FSM proportions contribute more than changes in within-FSM rates; the opposite holds for the SEN partition. The pooled comparison shows a positive FSM composition term partly offset by a negative within-group term. Within-group changes dominate the 2021/22–2022/23 increase under both partitions. FSM and SEN are alternative classifications of the same pupils: their contributions must not be added or treated as causal effects. D11c accounts for historical change; D11b describes subgroup gaps and E4 estimates borough-level associations.
 
-**Verification and status:** The local runner reported exact subgroup-to-headline reconciliation and passed the decomposition identity checks. Independent recalculation from the frozen DfE release agreed with all 12 exported group rows and six London results (maximum identity residual `1.11e-15` pp; required tolerance `1e-10` pp). Eleven focused synthetic tests passed in isolation. Full local regression-suite output has not been supplied. The implementation was applied locally, but GitHub publication has not been confirmed. This checkpoint supersedes the implementation-pending status above; D9g, D11a and D11b remain unchanged.
+**D11c verification:** The runner reported successful subgroup/headline and decomposition identities. Independent reconstruction from the frozen DfE release agreed with all 12 exported group rows and six London results (maximum identity residual `1.11e-15` pp against a `1e-10` pp tolerance). Eleven focused synthetic tests passed in isolation; this checkpoint did not independently establish a passing full regression suite. The earlier implementation-pending status is superseded; D9g, D11a and D11b results were unchanged.
 
 ## D11d — Evidence-to-action policy synthesis (7 November 2026)
 
@@ -1299,4 +1299,4 @@ Starting from the initial overall rate, subgroup shares can be changed first and
 3. **Investigate differentiated support without excluding others.** Examine barriers and access for disadvantaged/FSM and identified-SEN pupils, with AP assessed separately. Test proposed accessible advice, navigation or transition support with pupils, families and providers. Group membership alone must not determine eligibility or intervention.
 4. **Evaluate before scaling.** For any candidate support, specify eligibility, intended reach, usual provision, a credible comparison design, sustained-participation outcome and follow-up horizon, alongside recording quality, equity, feasibility and cost. Resource expansion requires evidence of additional benefit, not observed burden alone.
 
-**Limits and next step:** The outcome is outside *recorded* sustained destinations, not a direct NEET measure. The revised series ends with 2022/23; school location is not residence. Small cells, rounded disadvantage data, changing classifications and limited independent year regimes constrain interpretation. No current borough allocation, individual risk prediction or benefit-per-pound ranking follows. D11e remains deferred; public README/results integration is a separate final milestone. Earlier checkpoint wording is retained as a dated record.
+**Limits and deferred work:** The outcome is outside *recorded* sustained destinations, not a direct NEET measure. The revised series ends with 2022/23; school location is not residence. Small cells, rounded disadvantage data, changing classifications and limited independent year regimes constrain interpretation. No current borough allocation, individual risk prediction or benefit-per-pound ranking follows. D11e's newer-vintage comparison remains deferred; the README presents the completed results within these boundaries.
