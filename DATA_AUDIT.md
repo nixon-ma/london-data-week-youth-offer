@@ -2957,3 +2957,17 @@ Historical counts indicate observed scale, not the number eligible, reachable or
 **Locally verified environment:** Python 3.14.3; NumPy 2.4.4; pandas 3.0.1; SciPy 1.18.0; scikit-learn 1.9.0; statsmodels 0.15.0; Matplotlib 3.10.8. Local verification reported 90 passing tests, 2,000/2,000 successful bootstrap refits, reproduced final-cohort metrics and historical-change identities, and regenerated all nine publication figures. After Figure 6 was changed to read exported rather than embedded MAEs, its E1–E4 values matched the independently audited figures. These local reports are not CI results.
 
 **Dependency scope:** `requirements.txt` specifies supported version ranges rather than a locked environment. Its pandas upper bound was raised from `<3` to `<4` to permit the locally verified pandas 3.0.1 version. One verified environment does not establish compatibility with every permitted package combination.
+
+---
+
+# 32. Windows reproduction check (11–12 November 2026)
+
+The local and remote `d9-implementation` revisions matched at `add1dfa9b93da388e126a792fdde96fa06091bf5`; the working tree was initially clean. SHA-256 hashes of the frozen DfE ZIP and its internal CSV matched §1.3. The rerun used Python 3.14.3 on Windows with NumPy 2.5.4, pandas 3.1.1, SciPy 1.18.1, scikit-learn 1.9.1, statsmodels 0.15.0 and Matplotlib 3.11.2. `pip check` reported no conflicts, and all 90 tests passed. These versions differ from the earlier successful environment in §31.
+
+The explanatory/development pipeline ran once, reproducing E1–E4 fit metrics, 2,000/2,000 successful D9e bootstrap refits (seed 20261030), 43 robustness fits and the D9c development scores. Separate calculations from the exported tables checked all 22 bootstrap intervals and standard deviations and all 16 annual development method scores. The D9f preflight used 160 historical transitions through 2021/22 and did not score final targets. Releasing the previously authorised D9g evaluation reproduced 2022/23 MAEs of 0.964386 (B1), 1.306742 (B2), 0.877997 (B3) and 0.978946 (M1) pp; recalculation from borough-level records also matched the RMSEs, weighted MAEs and 18/32 B3 wins over M1.
+
+D11a's 3,360 five-way destination groups, 525 London summary rows and 75 endpoint comparisons reconciled. D11b subgroup counts and gaps matched the published persistence results (221/224 FSM and 223/224 SEN positive borough-years); disclosure-controlled disadvantage rates and AP were kept separate. All 12 D11c group contributions were recalculated from D11b counts, with six decomposition identities agreeing to `1e-10` pp. All nine SVGs were regenerated and visually compared with the committed figures. Matplotlib 3.11.2 shifted some SVG coordinates but not the plotted content; the committed files were retained.
+
+The initial D11c console run failed because its Unicode arrow labels could not be encoded by the Windows CP1252 output stream. The CSV itself was valid UTF-8. The three comparison labels were changed to ASCII `to`, with the corresponding existing test updated. The tests, D11c runner and independent arithmetic check then passed without changing any comparison periods or calculations.
+
+The checks comprise local executions and separate arithmetic verification of their exported results, not CI or an independently reimplemented raw-data pipeline. D9g remains a reproduction of the single previously released holdout on retrospectively harmonised data, rather than an operational point-in-time evaluation.

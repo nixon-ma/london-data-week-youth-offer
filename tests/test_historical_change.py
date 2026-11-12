@@ -119,7 +119,7 @@ class HistoricalChangeTests(unittest.TestCase):
         summary, detail = change.decompose_historical_change(cells, headline)
         self.assertEqual(len(summary), 6)
         self.assertEqual(len(detail), 12)
-        primary = detail.loc[detail["comparison"].eq("Early pooled → recent pooled")]
+        primary = detail.loc[detail["comparison"].eq("Early pooled to recent pooled")]
         eligible = primary.loc[(primary["partition"].eq("FSM"))
                                & primary["group"].eq("FSM eligible")].iloc[0]
         self.assertEqual(eligible["start_cohort_count"], 2 * (20 + 200 + 50))

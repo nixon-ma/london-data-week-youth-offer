@@ -8,11 +8,11 @@ from youth_offer import need, pathways
 
 PARTITIONS = need.GAP_GROUPS
 COMPARISONS = {
-    "2016/17 → 2022/23": (("201617",), ("202223",)),
-    "Early pooled → recent pooled": (
+    "2016/17 to 2022/23": (("201617",), ("202223",)),
+    "Early pooled to recent pooled": (
         ("201617", "201718", "201819"), ("202122", "202223")
     ),
-    "2021/22 → 2022/23": (("202122",), ("202223",)),
+    "2021/22 to 2022/23": (("202122",), ("202223",)),
 }
 KEY = ("time_period", "new_la_code")
 COUNT_COLUMNS = need.COUNT_COLUMNS
